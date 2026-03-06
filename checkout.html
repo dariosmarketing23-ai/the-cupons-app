@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprar Cupom | The Cupons</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .checkout-page {
+            padding: 40px 0 80px;
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Passos */
+        .checkout-steps {
+            display: flex;
+            gap: 0;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 20px;
+            background: white;
+            border: 1px solid var(--gray-200);
+            position: relative;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--gray-400);
+        }
+
+        .step:first-child { border-radius: var(--radius-md) 0 0 var(--radius-md); }
+        .step:last-child { border-radius: 0 var(--radius-md) var(--radius-md) 0; }
+
+        .step.active {
+            color: var(--primary);
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .step.done {
+            color: var(--success);
+            background: var(--success-light);
+            border-color: var(--success);
+        }
+
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-full);
+            background: var(--gray-200);
+            color: var(--gray-500);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .step.active .step-number {
+            background: var(--primary);
+            color: white;
+        }
+
+        .step.done .step-number {
+            background: var(--success);
+            color: white;
+        }
+
+        /* Formulário */
+        .checkout-form {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+        }
+
+        .form-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-family: var(--font);
+            font-size: 0.9rem;
+            color: var(--gray-800);
+            background: var(--gray-50);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* Métodos de pagamento */
+        .payment-methods {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method {
+            flex: 1;
+            padding: 14px;
+            border: 1.5px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            background: white;
+            cursor: pointer;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            font-family: var(--font);
+            transition: all 0.2s ease;
+        }
+
+        .payment-method:hover {
+            border-color: var(--gray-300);
+        }
+
+        .payment-method.selected {
+            border-color: var(--primary);
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .payment-method .pay-icon {
+            display: block;
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+        }
+
+        /* Resumo lateral */
+        .order-summary {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            position: sticky;
+            top: 88px;
+        }
+
+        .summary-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+        }
+
+        .summary-product {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .summary-thumb {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .summary-info h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .summary-info .partner {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .summary-line {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-line .label {
+            color: var(--gray-500);
+        }
+
+        .summary-line .value {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .summary-line.discount .value {
+            color: var(--success);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            border-top: 1.5px solid var(--gray-200);
+            padding-top: 16px;
+            margin-top: 16px;
+            font-weight: 700;
+        }
+
+        .summary-total .total-value {
+            font-size: 1.4rem;
+            color: var(--gray-900);
+        }
+
+        .secure-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+            font-size: 0.78rem;
+            color: var(--gray-400);
+        }
+
+        /* Página de Confirmação */
+        .confirmation-card {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 48px 40px;
+            text-align: center;
+        }
+
+        .confirm-icon {
+            width: 72px;
+            height: 72px;
+            background: var(--success-light);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .confirm-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .confirm-subtitle {
+            color: var(--gray-500);
+            margin-bottom: 32px;
+        }
+
+        .voucher-box {
+            background: var(--primary-light);
+            border: 2px dashed var(--primary);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+            margin-bottom: 24px;
+        }
+
+        .voucher-box .voucher-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--gray-500);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .voucher-code {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            color: var(--primary);
+            font-family: 'Courier New', monospace;
+            user-select: all;
+        }
+
+        .voucher-product {
+            font-size: 0.95rem;
+            color: var(--gray-600);
+            margin-top: 12px;
+        }
+
+        .confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 8px;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        .btn-success:hover {
+            background-color: #1DAA54;
+            border-color: #1DAA54;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+
+            .checkout-steps {
+                flex-direction: column;
+            }
+
+            .step:first-child { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+            .step:last-child { border-radius: 0 0 var(--radius-md) var(--radius-md); }
+
+            .form-row, .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .payment-methods {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <img src="img/logo.svg" alt="The Cupons">
+            </a>
+            <nav class="header-nav" style="margin-left: auto;">
+                <a href="index.html" class="nav-link">← Voltar às Ofertas</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="checkout-page">
+        <div class="container">
+
+            <!-- Passos -->
+            <div class="checkout-steps" id="checkout-steps">
+                <div class="step active" id="step-1">
+                    <div class="step-number">1</div>
+                    <span>Dados Pessoais</span>
+                </div>
+                <div class="step" id="step-2">
+                    <div class="step-number">2</div>
+                    <span>Pagamento</span>
+                </div>
+                <div class="step" id="step-3">
+                    <div class="step-number">3</div>
+                    <span>Confirmação</span>
+                </div>
+            </div>
+
+            <!-- STEP 1 & 2: Form + Summary -->
+            <div class="checkout-layout" id="checkout-area">
+                <div>
+                    <!-- Dados Pessoais -->
+                    <div class="checkout-form" id="form-dados">
+                        <h3 class="form-section-title">Seus Dados</h3>
+                        <div class="form-group">
+                            <label for="nome">Nome completo</label>
+                            <input type="text" id="nome" placeholder="Ex: João da Silva">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input type="email" id="email" placeholder="joao@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="telefone">Telefone</label>
+                                <input type="tel" id="telefone" placeholder="(99) 99999-9999">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input type="text" id="cpf" placeholder="000.000.000-00">
+                        </div>
+                        <button class="btn btn-primary btn-block btn-lg" onclick="goToStep(2)">Continuar para Pagamento →</button>
+                    </div>
+
+                    <!-- Pagamento -->
+                    <div class="checkout-form" id="form-pagamento" style="display: none;">
+                        <h3 class="form-section-title">Forma de Pagamento</h3>
+
+                        <div class="payment-methods" id="payment-methods">
+                            <button class="payment-method selected" onclick="selectPayment(this, 'cartao')">
+                                <span class="pay-icon">💳</span>
+                                Cartão de Crédito
+                            </button>
+                            <button class="payment-method" onclick="selectPayment(this, 'pix')">
+                                <span class="pay-icon">📱</span>
+                                PIX
+                            </button>
+                            <button class="payment-method" onclick="selectPayment(this, 'boleto')">
+                                <span class="pay-icon">📄</span>
+                                Boleto
+                            </button>
+                        </div>
+
+                        <!-- Campos do Cartão -->
+                        <div id="card-fields">
+                            <div class="form-group">
+                                <label for="card-number">Número do cartão</label>
+                                <input type="text" id="card-number" placeholder="0000 0000 0000 0000">
+                            </div>
+                            <div class="form-group">
+                                <label for="card-name">Nome no cartão</label>
+                                <input type="text" id="card-name" placeholder="JOÃO DA SILVA">
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="card-expiry">Validade</label>
+                                    <input type="text" id="card-expiry" placeholder="MM/AA">
+                                </div>
+                                <div class="form-group">
+                                    <label for="card-cvv">CVV</label>
+                                    <input type="text" id="card-cvv" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PIX Info -->
+                        <div id="pix-fields" style="display: none;">
+                            <div style="background: var(--accent-light); padding: 20px; border-radius: var(--radius-md); text-align: center; color: var(--gray-700);">
+                                <p style="font-weight: 600; margin-bottom: 4px;">Pagamento via PIX</p>
+                                <p style="font-size: 0.85rem; color: var(--gray-500);">Após confirmar, um QR Code será gerado para pagamento imediato.</p>
+                            </div>
+                        </div>
+
+                        <!-- Boleto Info -->
+                        <div id="boleto-fields" style="display: none;">
+                            <div style="background: var(--gray-100); padding: 20px; border-radius: var(--radius-md); text-align: center; color: var(--gray-700);">
+                                <p style="font-weight: 600; margin-bottom: 4px;">Pagamento via Boleto</p>
+                                <p style="font-size: 0.85rem; color: var(--gray-500);">O boleto será gerado após confirmar. Prazo de compensação: 1-2 dias úteis.</p>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 24px; display: flex; gap: 12px;">
+                            <button class="btn btn-outline btn-lg" onclick="goToStep(1)" style="flex: 0.4;">← Voltar</button>
+                            <button class="btn btn-primary btn-block btn-lg" onclick="finalizePurchase()" style="flex: 1;">Finalizar Compra</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumo do Pedido -->
+                <div>
+                    <div class="order-summary">
+                        <h3 class="summary-title">Resumo do Pedido</h3>
+                        <div class="summary-product">
+                            <img src="" id="summary-thumb" class="summary-thumb" alt="Produto">
+                            <div class="summary-info">
+                                <div class="partner" id="summary-partner">Parceiro</div>
+                                <h4 id="summary-title">Produto</h4>
+                            </div>
+                        </div>
+                        <div class="summary-line">
+                            <span class="label">Preço original</span>
+                            <span class="value" id="summary-old-price">R$ 0,00</span>
+                        </div>
+                        <div class="summary-line discount">
+                            <span class="label">Desconto</span>
+                            <span class="value" id="summary-discount">- R$ 0,00</span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span class="total-value" id="summary-total">R$ 0,00</span>
+                        </div>
+                        <div class="secure-badge">🔒 Compra 100% segura</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Confirmação (hidden until purchase) -->
+            <div id="confirmation-area" style="display: none;">
+                <div class="confirmation-card">
+                    <div class="confirm-icon">✅</div>
+                    <h2 class="confirm-title">Compra realizada!</h2>
+                    <p class="confirm-subtitle">Seu cupom está pronto. Apresente o código abaixo no estabelecimento.</p>
+
+                    <div class="voucher-box">
+                        <div class="voucher-label">Código do Voucher</div>
+                        <div class="voucher-code" id="voucher-code">XXXX-XXXX</div>
+                        <div class="voucher-product" id="voucher-product">Produto — Parceiro</div>
+                    </div>
+
+                    <div class="confirm-actions">
+                        <button class="btn btn-success btn-lg" onclick="downloadVoucherPDF()">
+                            📥 Baixar PDF do Voucher
+                        </button>
+                        <a href="minha-conta.html" class="btn btn-outline btn-lg">Minha Conta</a>
+                        <a href="index.html" class="btn btn-outline btn-lg">Início</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container text-center footer-bottom" style="margin-top: 0;">
+            <p>&copy; 2026 The Cupons. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let currentCupom = null;
+        let generatedCode = '';
+        let selectedPayment = 'cartao';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cupomId = parseInt(urlParams.get('id'));
+            
+            if (cupomId) {
+                currentCupom = cuponsData.find(c => c.id === cupomId);
+                if (currentCupom) {
+                    document.getElementById('summary-title').textContent = currentCupom.titulo;
+                    document.getElementById('summary-partner').textContent = currentCupom.parceiro;
+                    document.getElementById('summary-thumb').src = currentCupom.imagem;
+                    document.getElementById('summary-old-price').textContent = currentCupom.precoAntigo;
+                    
+                    const oldNum = parseFloat(currentCupom.precoAntigo.replace('R$ ', '').replace('.', '').replace(',', '.'));
+                    const newNum = parseFloat(currentCupom.precoNovo.replace('R$ ', '').replace('.', '').replace(',', '.'));
+                    const discountVal = oldNum - newNum;
+                    
+                    document.getElementById('summary-discount').textContent = `- R$ ${discountVal.toFixed(2).replace('.', ',')}`;
+                    document.getElementById('summary-total').textContent = currentCupom.precoNovo;
+                    document.title = `Comprar: ${currentCupom.titulo} — The Cupons`;
+                }
+            }
+
+            // Auto preenche se logado
+            const session = getSession();
+            if (session && session.tipo === 'cliente') {
+                const clientes = getClientes();
+                const cliente = clientes.find(c => c.id === session.id);
+                if (cliente) {
+                    document.getElementById('nome').value = cliente.nome;
+                    document.getElementById('email').value = cliente.email;
+                    document.getElementById('telefone').value = cliente.telefone || '';
+                    document.getElementById('cpf').value = cliente.cpf || '';
+                }
+            }
+        });
+
+        function goToStep(step) {
+            const formDados = document.getElementById('form-dados');
+            const formPagamento = document.getElementById('form-pagamento');
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+
+            if (step === 1) {
+                formDados.style.display = 'block';
+                formPagamento.style.display = 'none';
+                step1.className = 'step active';
+                step2.className = 'step';
+            } else if (step === 2) {
+                const nome = document.getElementById('nome').value.trim();
+                const email = document.getElementById('email').value.trim();
+                if (!nome || !email) {
+                    alert('Por favor, preencha nome e e-mail.');
+                    return;
+                }
+                formDados.style.display = 'none';
+                formPagamento.style.display = 'block';
+                step1.className = 'step done';
+                step2.className = 'step active';
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectPayment(el, method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-method').forEach(b => b.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('card-fields').style.display = method === 'cartao' ? 'block' : 'none';
+            document.getElementById('pix-fields').style.display = method === 'pix' ? 'block' : 'none';
+            document.getElementById('boleto-fields').style.display = method === 'boleto' ? 'block' : 'none';
+        }
+
+        function finalizePurchase() {
+            if (!currentCupom) return;
+
+            // Registra compra se logado
+            const session = getSession();
+            if (session && session.tipo === 'cliente') {
+                const compra = registrarCompra(session.id, currentCupom.id, currentCupom.precoNovo);
+                generatedCode = compra.codigo;
+            } else {
+                // Gera código avulso se não logado
+                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                generatedCode = '';
+                for (let i = 0; i < 8; i++) {
+                    if (i === 4) generatedCode += '-';
+                    generatedCode += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+            }
+
+            document.getElementById('checkout-area').style.display = 'none';
+            document.getElementById('checkout-steps').querySelector('#step-2').className = 'step done';
+            document.getElementById('checkout-steps').querySelector('#step-3').className = 'step active';
+            document.getElementById('confirmation-area').style.display = 'block';
+
+            document.getElementById('voucher-code').textContent = generatedCode;
+            document.getElementById('voucher-product').textContent = `${currentCupom.titulo} — ${currentCupom.parceiro}`;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Gera o PDF do Voucher usando jsPDF
+        function downloadVoucherPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const centerX = pageWidth / 2;
+            const nomeCliente = document.getElementById('nome').value || 'Cliente';
+
+            // Background
+            doc.setFillColor(248, 249, 250);
+            doc.rect(0, 0, pageWidth, 297, 'F');
+
+            // Header bar
+            doc.setFillColor(0, 114, 188); // Brand blue
+            doc.rect(0, 0, pageWidth, 40, 'F');
+
+            // Logo text in header
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.text('THE CUPONS', centerX, 25, { align: 'center' });
+
+            // Voucher card
+            doc.setFillColor(255, 255, 255);
+            doc.roundedRect(20, 55, pageWidth - 40, 180, 4, 4, 'F');
+
+            // Card border
+            doc.setDrawColor(229, 229, 229);
+            doc.roundedRect(20, 55, pageWidth - 40, 180, 4, 4, 'S');
+
+            // Title inside card
+            doc.setTextColor(23, 23, 23);
+            doc.setFontSize(20);
+            doc.setFont('helvetica', 'bold');
+            doc.text('VOUCHER DE DESCONTO', centerX, 78, { align: 'center' });
+
+            // Divider
+            doc.setDrawColor(0, 114, 188);
+            doc.setLineWidth(0.5);
+            doc.line(40, 84, pageWidth - 40, 84);
+
+            // Product info
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(115, 115, 115);
+            doc.text('PRODUTO / SERVIÇO', centerX, 98, { align: 'center' });
+
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(23, 23, 23);
+            doc.text(currentCupom.titulo, centerX, 108, { align: 'center' });
+
+            // Partner name
+            doc.setFontSize(12);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 114, 188);
+            doc.text(currentCupom.parceiro, centerX, 118, { align: 'center' });
+
+            // Price
+            doc.setFontSize(10);
+            doc.setTextColor(163, 163, 163);
+            doc.text(`De ${currentCupom.precoAntigo}`, centerX - 20, 135, { align: 'center' });
+
+            doc.setFontSize(22);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(34, 197, 94);
+            doc.text(`Por ${currentCupom.precoNovo}`, centerX + 15, 136, { align: 'center' });
+
+            // Code Box
+            doc.setFillColor(232, 244, 253); // primary-light
+            doc.roundedRect(40, 148, pageWidth - 80, 40, 3, 3, 'F');
+            doc.setDrawColor(0, 114, 188);
+            doc.setLineDashPattern([3, 3], 0);
+            doc.roundedRect(40, 148, pageWidth - 80, 40, 3, 3, 'S');
+            doc.setLineDashPattern([], 0);
+
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(115, 115, 115);
+            doc.text('CÓDIGO DO VOUCHER', centerX, 158, { align: 'center' });
+
+            doc.setFontSize(28);
+            doc.setFont('courier', 'bold');
+            doc.setTextColor(0, 114, 188);
+            doc.text(generatedCode, centerX, 178, { align: 'center' });
+
+            // Client info
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(115, 115, 115);
+            doc.text(`Comprador: ${nomeCliente}`, centerX, 202, { align: 'center' });
+
+            const dataEmissao = new Date().toLocaleDateString('pt-BR');
+            doc.text(`Data da compra: ${dataEmissao}`, centerX, 210, { align: 'center' });
+
+            doc.text(`Cidade: ${currentCupom.cidade}`, centerX, 218, { align: 'center' });
+
+            // Bottom badge
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(232, 163, 23);
+            doc.text(`${currentCupom.desconto}`, centerX, 230, { align: 'center' });
+
+            // Footer instructions
+            doc.setFontSize(9);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(163, 163, 163);
+            doc.text('Apresente este voucher no estabelecimento para resgatar seu desconto.', centerX, 252, { align: 'center' });
+            doc.text('Válido por 30 dias a partir da data de compra. Não cumulativo com outras promoções.', centerX, 258, { align: 'center' });
+            doc.text('www.thecupons.com.br', centerX, 270, { align: 'center' });
+
+            doc.save(`voucher-thecupons-${generatedCode}.pdf`);
+        }
+    </script>
+</body>
+</html>

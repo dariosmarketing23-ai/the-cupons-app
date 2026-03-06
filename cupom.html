@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalhes do Cupom | The Cupons</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .detail-page { padding: 40px 0 80px; }
+        .detail-layout {
+            display: grid; grid-template-columns: 1fr 380px;
+            gap: 40px; align-items: start;
+        }
+        .detail-image {
+            width: 100%; height: 380px; object-fit: cover;
+            border-radius: var(--radius-lg);
+        }
+        .breadcrumbs { font-size: 0.85rem; color: var(--gray-400); margin-bottom: 16px; }
+        .breadcrumbs span { color: var(--gray-600); }
+        .detail-partner {
+            font-size: 0.8rem; color: var(--primary); font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;
+        }
+        .detail-title {
+            font-size: 1.8rem; font-weight: 800; color: var(--gray-900);
+            line-height: 1.2; letter-spacing: var(--tracking-tight); margin-bottom: 24px;
+        }
+        .purchase-card {
+            background: white; border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg); padding: 28px;
+            position: sticky; top: 88px;
+        }
+        .price-box {
+            background-color: var(--accent-light); padding: 24px;
+            border-radius: var(--radius-md); text-align: center;
+            margin-bottom: 20px; border: 1.5px dashed var(--accent);
+        }
+        .price-box .price-old { font-size: 1rem; text-decoration: line-through; color: var(--gray-400); }
+        .price-box .price-new {
+            font-size: 2.2rem; font-weight: 800; color: var(--gray-900);
+            display: block; margin: 4px 0 16px;
+        }
+        .price-box .helper-text { font-size: 0.8rem; color: var(--gray-500); margin-top: 12px; }
+        .location-info { border-top: 1px solid var(--gray-200); padding-top: 20px; margin-top: 4px; }
+        .location-info h4 {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;
+            color: var(--gray-400); margin-bottom: 6px;
+        }
+        .location-info p { color: var(--gray-600); font-size: 0.9rem; }
+        .rules-section {
+            margin-top: 32px; background: white; border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg); padding: 28px;
+        }
+        .rules-section h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; color: var(--gray-900); }
+        .rules-section ul { list-style: none; padding: 0; }
+        .rules-section li {
+            padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-600); font-size: 0.9rem; padding-left: 20px; position: relative;
+        }
+        .rules-section li::before { content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: 700; }
+        .rules-section li:last-child { border-bottom: none; }
+        @media (max-width: 992px) {
+            .detail-layout { grid-template-columns: 1fr; }
+            .purchase-card { position: static; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo"><img src="img/logo.svg" alt="The Cupons"></a>
+            <div class="search-bar">
+                <input type="text" placeholder="Busque produtos, lojas ou categorias...">
+                <button class="search-btn" aria-label="Buscar">🔍</button>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html" class="nav-link">← Voltar</a>
+                <a href="login.html" class="btn btn-outline" id="auth-btn">Entrar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="detail-page">
+        <div class="container detail-layout">
+            <!-- Coluna Principal -->
+            <div>
+                <div class="breadcrumbs">
+                    <a href="index.html">Início</a> › <span id="breadcrumb-category">Categoria</span> › <span id="breadcrumb-city">Cidade</span>
+                </div>
+                <img src="" alt="Imagem da Oferta" id="detail-image" class="detail-image">
+                <div class="rules-section">
+                    <h3>Como usar este cupom</h3>
+                    <ul>
+                        <li>Clique em "Comprar Agora" e preencha seus dados.</li>
+                        <li>Escolha a forma de pagamento e finalize a compra.</li>
+                        <li>Após o pagamento, seu voucher com código será gerado.</li>
+                        <li>Baixe o PDF e apresente no estabelecimento.</li>
+                        <li>Válido por 30 dias após a compra.</li>
+                        <li>Não cumulativo com outras promoções.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sidebar de Compra -->
+            <div>
+                <div class="purchase-card">
+                    <div class="detail-partner" id="detail-partner">Parceiro</div>
+                    <h1 class="detail-title" id="detail-title">Carregando...</h1>
+
+                    <!-- Countdown Timer -->
+                    <div class="detail-timer" id="detail-timer" style="display: none;">
+                        ⏳ Oferta expira em:
+                        <span class="timer-num" id="timer-days">0</span>d
+                        <span class="timer-num" id="timer-hours">0</span>h
+                        <span class="timer-num" id="timer-mins">0</span>m
+                        <span class="timer-num" id="timer-secs">0</span>s
+                    </div>
+
+                    <!-- Scarcity Panel -->
+                    <div class="scarcity-panel" id="scarcity-panel" style="display: none;">
+                        <div class="scarcity-title" id="scarcity-title">⚡ Oferta limitada!</div>
+                        <div class="scarcity-row">
+                            <span>Cupons vendidos</span>
+                            <strong id="scarcity-sold">0</strong>
+                        </div>
+                        <div class="scarcity-row">
+                            <span>Restantes</span>
+                            <strong id="scarcity-remaining">0</strong>
+                        </div>
+                        <div class="stock-bar"><div class="stock-fill" id="scarcity-bar"></div></div>
+                    </div>
+
+                    <div class="price-box">
+                        <span class="price-old" id="detail-old-price">R$ 0,00</span>
+                        <span class="price-new" id="detail-new-price">R$ 0,00</span>
+                        <a href="#" id="buy-now-btn" class="btn btn-primary btn-block btn-lg">
+                            🛒 Comprar Agora
+                        </a>
+                        <p class="helper-text">Pagamento seguro via cartão, PIX ou boleto.</p>
+                    </div>
+
+                    <!-- Social Proof -->
+                    <div class="detail-recent-buyers" id="detail-buyers" style="display: none;">
+                        <div class="dot-online"></div>
+                        <span id="buyers-text"></span>
+                    </div>
+
+                    <div class="location-info">
+                        <h4>Localização</h4>
+                        <p id="detail-location">Endereço do parceiro</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container text-center footer-bottom" style="margin-top: 0;">
+            <p>&copy; 2026 The Cupons. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        let countdownInterval = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const cupomId = parseInt(urlParams.get('id'));
+            
+            if (cupomId) {
+                const cupom = cuponsData.find(c => c.id === cupomId);
+                if (cupom) {
+                    // Info básica
+                    document.getElementById('detail-title').textContent = cupom.titulo;
+                    document.getElementById('detail-partner').textContent = cupom.parceiro;
+                    document.getElementById('detail-old-price').textContent = `De ${cupom.precoAntigo}`;
+                    document.getElementById('detail-new-price').textContent = `Por ${cupom.precoNovo}`;
+                    document.getElementById('detail-image').src = cupom.imagem;
+                    document.getElementById('breadcrumb-category').textContent = cupom.categoria;
+                    document.getElementById('breadcrumb-city').textContent = cupom.cidade;
+                    document.getElementById('detail-location').textContent = `Localizado em ${cupom.cidade}`;
+                    document.title = `${cupom.titulo} — The Cupons`;
+                    document.getElementById('buy-now-btn').href = `checkout.html?id=${cupom.id}`;
+
+                    // ── SCARCITY TRIGGERS ──
+                    const info = getScarcityInfo(cupom);
+
+                    // 1. Countdown Timer
+                    if (cupom.expiraEm) {
+                        document.getElementById('detail-timer').style.display = 'flex';
+                        startCountdown(new Date(cupom.expiraEm));
+                    }
+
+                    // 2. Scarcity Panel (estoque)
+                    if (cupom.estoque) {
+                        const panel = document.getElementById('scarcity-panel');
+                        panel.style.display = 'block';
+                        if (info.urgency >= 2) panel.classList.add('critical');
+
+                        if (info.restantes <= 3 && info.restantes > 0) {
+                            document.getElementById('scarcity-title').innerHTML = '🔥 Quase esgotado!';
+                        } else if (info.restantes <= 5) {
+                            document.getElementById('scarcity-title').innerHTML = '⚡ Restam poucos cupons!';
+                        }
+
+                        document.getElementById('scarcity-sold').textContent = cupom.vendidos || 0;
+                        document.getElementById('scarcity-remaining').textContent = info.restantes;
+
+                        const pct = Math.min(info.percentUsed, 100);
+                        const bar = document.getElementById('scarcity-bar');
+                        bar.style.width = pct + '%';
+                        bar.style.background = info.urgency >= 2 ? '#DC2626' : info.urgency === 1 ? '#F59E0B' : '#22C55E';
+                    }
+
+                    // 3. CTA Button urgency
+                    const buyBtn = document.getElementById('buy-now-btn');
+                    if (info.urgency >= 2) {
+                        buyBtn.innerHTML = '🔥 Garantir Agora — Últimas Unidades!';
+                        buyBtn.classList.add('btn-pulse');
+                    } else if (info.urgency === 1) {
+                        buyBtn.innerHTML = '⚡ Comprar Agora — Oferta Limitada!';
+                    }
+
+                    // 4. Social Proof
+                    const vendidos = cupom.vendidos || 0;
+                    if (vendidos > 0) {
+                        document.getElementById('detail-buyers').style.display = 'flex';
+                        const recent = Math.min(vendidos, Math.floor(Math.random() * 6) + 3);
+                        const viewing = Math.floor(Math.random() * 8) + 2;
+                        document.getElementById('buyers-text').textContent = 
+                            `${recent} pessoas compraram recentemente · ${viewing} vendo agora`;
+                    }
+
+                } else {
+                    document.getElementById('detail-title').textContent = 'Oferta não encontrada';
+                }
+            }
+
+            // Auth-aware header
+            const session = getSession();
+            const authBtn = document.getElementById('auth-btn');
+            if (session && authBtn) {
+                if (session.tipo === 'admin') {
+                    authBtn.textContent = '⚙️ Painel';
+                    authBtn.href = 'admin.html';
+                    authBtn.className = 'btn btn-primary';
+                } else {
+                    authBtn.textContent = '👤 ' + session.nome.split(' ')[0];
+                    authBtn.href = 'minha-conta.html';
+                    authBtn.className = 'btn btn-primary';
+                }
+            }
+        });
+
+        // Live countdown
+        function startCountdown(endDate) {
+            function tick() {
+                const now = new Date();
+                const diff = endDate - now;
+
+                if (diff <= 0) {
+                    document.getElementById('timer-days').textContent = '0';
+                    document.getElementById('timer-hours').textContent = '0';
+                    document.getElementById('timer-mins').textContent = '0';
+                    document.getElementById('timer-secs').textContent = '0';
+                    clearInterval(countdownInterval);
+                    return;
+                }
+
+                const d = Math.floor(diff / 86400000);
+                const h = Math.floor((diff % 86400000) / 3600000);
+                const m = Math.floor((diff % 3600000) / 60000);
+                const s = Math.floor((diff % 60000) / 1000);
+
+                document.getElementById('timer-days').textContent = d;
+                document.getElementById('timer-hours').textContent = h;
+                document.getElementById('timer-mins').textContent = String(m).padStart(2, '0');
+                document.getElementById('timer-secs').textContent = String(s).padStart(2, '0');
+
+                // Make timer more urgent when close
+                if (d === 0 && h < 6) {
+                    document.getElementById('detail-timer').style.background = '#DC2626';
+                }
+            }
+
+            tick();
+            countdownInterval = setInterval(tick, 1000);
+        }
+    </script>
+</body>
+</html>

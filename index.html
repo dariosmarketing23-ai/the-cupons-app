@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Cupons — Os Melhores Descontos da Sua Cidade</title>
+    <meta name="description" content="Encontre os melhores cupons de desconto para produtos e serviços em Caxias-MA e Teresina-PI. Economize todos os dias!">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Promo Top Bar -->
+    <div class="top-promo-bar">
+        <span class="promo-badge">The Cupons</span>
+        <span class="promo-text">Por tempo limitado: <strong>até 50% de cashback</strong> (era 2%)</span>
+        <span class="promo-arrow">›</span>
+    </div>
+
+    <!-- Modal de Seleção de Cidade -->
+    <div id="city-modal" class="modal-overlay">
+        <div class="modal-content">
+            <img src="img/logo.svg" alt="The Cupons" class="modal-logo">
+            <h2>Selecione sua cidade</h2>
+            <p>Veja as ofertas exclusivas da sua região.</p>
+            <div class="city-buttons">
+                <button class="btn btn-primary btn-lg" onclick="setCity('Caxias-MA')">Caxias — MA</button>
+                <button class="btn btn-accent btn-lg" onclick="setCity('Teresina-PI')">Teresina — PI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <img src="img/logo.svg" alt="The Cupons">
+            </a>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Busque produtos, lojas ou categorias..." id="search-input">
+                <button class="search-btn" aria-label="Buscar">🔍</button>
+            </div>
+
+            <nav class="header-nav">
+                <!-- City Switcher -->
+                <div class="city-switcher" id="city-switcher">
+                    <button class="city-switcher-btn" onclick="toggleCityDropdown()">
+                        📍 <span id="current-city-label">Selecione</span> <span class="arrow">▼</span>
+                    </button>
+                    <div class="city-dropdown">
+                        <button onclick="setCity('Caxias-MA')" id="opt-caxias">📍 Caxias — MA</button>
+                        <button onclick="setCity('Teresina-PI')" id="opt-teresina">📍 Teresina — PI</button>
+                    </div>
+                </div>
+
+                <a href="#categorias" class="nav-link">Categorias</a>
+                <a href="login.html" class="btn btn-outline" id="auth-btn">Entrar</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Text (movido para cima do banner) -->
+        <section class="hero">
+            <div class="container text-center">
+                <h1>Cupons e cashback em <span class="highlight-city" id="display-city">sua cidade</span></h1>
+                <p>Economize na sua compra usando os melhores Cupons de Desconto e Cashback!</p>
+            </div>
+        </section>
+
+        <!-- Banner Slider (reduzido e centralizado) -->
+        <section class="banner-slider container" id="banner-slider">
+            <div class="slider-wrapper">
+                <div class="slider-track" id="slider-track">
+                    <!-- Rendering automatically from app.js -->
+                </div>
+            </div>
+
+            <!-- Setas -->
+            <button class="slider-arrow prev" onclick="slideMove(-1)" aria-label="Anterior">❮</button>
+            <button class="slider-arrow next" onclick="slideMove(1)" aria-label="Próximo">❯</button>
+
+            <!-- Dots -->
+            <div class="slider-dots" id="slider-dots">
+                <!-- Dots Rendering automatically from app.js -->
+            </div>
+        </section>
+
+        <!-- Ofertas do Dia -->
+        <section id="ofertas" class="featured-coupons container section-padding">
+            <h2 class="section-title">🔥 Ofertas do Dia</h2>
+            <div class="coupon-grid" id="coupon-grid"></div>
+        </section>
+        <!-- Lojas Populares -->
+        <section id="lojas-populares" class="container section-padding pb-0" style="padding-top: 20px;">
+            <h2 class="section-title">Melhores Lojas de Desconto</h2>
+            <div class="lojas-pill-container" id="lojas-pill-container">
+                <!-- Rendered dynamically -->
+            </div>
+        </section>
+
+        <!-- Categorias (Novo Layout Circular) -->
+        <section id="categorias" class="container section-padding" style="padding-top: 50px;">
+            <div class="title-row" style="margin-bottom: 24px;">
+                <h2 class="section-title" style="margin-bottom: 0;">Melhores Categorias de Desconto</h2>
+                <a href="#" class="btn btn-outline" style="border-radius: var(--radius-full); font-size: 0.82rem; padding: 6px 14px; border-color: var(--gray-800); color: var(--gray-800);">Ver todas as categorias</a>
+            </div>
+            <div class="category-circle-grid" id="category-circle-grid">
+                <!-- Rendered dynamically -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-container">
+            <div class="logo-footer">
+                <img src="img/logo.svg" alt="The Cupons">
+                <p>Sua plataforma local de descontos reais em Caxias-MA e Teresina-PI.</p>
+            </div>
+            <div>
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="#">Quem Somos</a></li>
+                    <li><a href="#">Termos de Uso</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Cidades</h4>
+                <ul>
+                    <li><a href="#" onclick="setCity('Caxias-MA')">Caxias — MA</a></li>
+                    <li><a href="#" onclick="setCity('Teresina-PI')">Teresina — PI</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Para Parceiros</h4>
+                <ul>
+                    <li><a href="#">Anuncie Conosco</a></li>
+                    <li><a href="#">Acesso Lojista</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container text-center footer-bottom">
+            <p>&copy; 2026 The Cupons. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Atualiza botão do header baseado na sessão
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = getSession();
+            const authBtn = document.getElementById('auth-btn');
+            if (session && authBtn) {
+                if (session.tipo === 'admin') {
+                    authBtn.textContent = '⚙️ Painel';
+                    authBtn.href = 'admin.html';
+                    authBtn.className = 'btn btn-primary';
+                } else {
+                    authBtn.textContent = '👤 ' + session.nome.split(' ')[0];
+                    authBtn.href = 'minha-conta.html';
+                    authBtn.className = 'btn btn-primary';
+                }
+            }
+
+            // Inicializa novas renderizações baseadas no layout do Cuponomia
+            if (typeof renderLojasPopulares === 'function') renderLojasPopulares();
+            if (typeof renderCategorias === 'function') renderCategorias();
+        });
+    </script>
+</body>
+</html>

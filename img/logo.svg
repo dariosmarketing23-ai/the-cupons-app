@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 115" width="360" height="115">
+  <!-- Tag Laranja (Fundo) -->
+  <g transform="translate(8, 3)">
+    <path d="M55 8 L85 8 L85 75 L55 95 L25 75 L25 38 Z" 
+          fill="none" stroke="#E8A317" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Furo da tag laranja -->
+    <circle cx="55" cy="22" r="4" fill="#E8A317"/>
+  </g>
+  
+  <!-- Tag Azul (Frente) -->
+  <g transform="translate(20, 13)">
+    <path d="M55 8 L85 8 L85 75 L55 95 L25 75 L25 38 Z" 
+          fill="none" stroke="#0072BC" stroke-width="6" stroke-linejoin="round" stroke-linecap="round"/>
+    <!-- Furo da tag azul -->
+    <circle cx="55" cy="22" r="4" fill="#0072BC"/>
+    <!-- Sorriso -->
+    <path d="M42 52 Q55 68 68 52" fill="none" stroke="#0072BC" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  
+  <!-- Texto THE -->
+  <text x="125" y="48" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="34" fill="#1A1A1A" letter-spacing="1">THE</text>
+  <!-- Texto CUPONS -->
+  <text x="125" y="90" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="40" fill="#1A1A1A" letter-spacing="2">CUPONS</text>
+</svg>

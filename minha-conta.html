@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta | The Cupons</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .account-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 28px;
+            padding: 32px 0 80px;
+        }
+
+        /* Sidebar */
+        .account-sidebar {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 88px;
+        }
+
+        .user-badge {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 14px;
+            border-bottom: 1px solid var(--gray-200);
+            margin-bottom: 8px;
+        }
+
+        .user-badge .avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .user-badge .user-name {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .user-badge .user-email {
+            font-size: 0.78rem;
+            color: var(--gray-500);
+        }
+
+        .account-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 14px;
+            color: var(--gray-600);
+            font-weight: 500;
+            font-size: 0.88rem;
+            border-radius: var(--radius-md);
+            transition: all 0.15s ease;
+        }
+
+        .account-menu li a:hover,
+        .account-menu li.active a {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .btn-logout {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            padding: 11px 14px;
+            background: none;
+            border: none;
+            border-top: 1px solid var(--gray-200);
+            margin-top: 8px;
+            padding-top: 16px;
+            color: #DC2626;
+            font-weight: 500;
+            font-size: 0.88rem;
+            font-family: var(--font);
+            cursor: pointer;
+        }
+
+        /* Main */
+        .account-main { min-width: 0; }
+
+        .page-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+        }
+
+        /* Cupom Cards */
+        .my-coupons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .my-coupon-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transition: border-color 0.2s;
+        }
+
+        .my-coupon-card:hover { border-color: var(--gray-300); }
+        .my-coupon-card.expired { opacity: 0.55; }
+
+        .my-coupon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .my-coupon-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            line-height: 1.3;
+        }
+
+        .badge-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: var(--radius-full);
+            font-size: 0.72rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-left: 12px;
+        }
+
+        .badge-status.ativo { background: var(--success-light); color: #16A34A; }
+        .badge-status.utilizado { background: var(--gray-100); color: var(--gray-500); }
+        .badge-status.expirado { background: #FEF2F2; color: #DC2626; }
+
+        .my-coupon-partner {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .my-coupon-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .detail-item { font-size: 0.82rem; }
+
+        .detail-item .detail-label {
+            color: var(--gray-400);
+            font-weight: 500;
+            margin-bottom: 2px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .detail-item .detail-value { color: var(--gray-800); font-weight: 600; }
+
+        .my-coupon-code {
+            background: var(--primary-light);
+            border: 1.5px dashed var(--primary);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            text-align: center;
+        }
+
+        .my-coupon-code .code-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--gray-500);
+            margin-bottom: 4px;
+        }
+
+        .my-coupon-code .code-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary);
+            font-family: 'Courier New', monospace;
+            user-select: all;
+        }
+
+        .my-coupon-code.disabled { background: var(--gray-100); border-color: var(--gray-300); }
+        .my-coupon-code.disabled .code-value { color: var(--gray-400); text-decoration: line-through; }
+
+        .my-coupon-footer { display: flex; gap: 8px; }
+
+        .account-section { display: none; }
+        .account-section.active { display: block; }
+
+        .data-card {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: 28px;
+        }
+
+        .data-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .data-row:last-child { border-bottom: none; }
+        .data-row .data-label { color: var(--gray-500); font-size: 0.88rem; }
+        .data-row .data-value { font-weight: 600; color: var(--gray-800); font-size: 0.88rem; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-400); }
+        .empty-state .empty-icon { font-size: 3rem; margin-bottom: 16px; }
+        .empty-state h3 { font-size: 1.1rem; color: var(--gray-600); margin-bottom: 8px; }
+
+        .btn-success { background-color: var(--success); color: white; border-color: var(--success); }
+        .btn-success:hover { background-color: #1DAA54; border-color: #1DAA54; transform: translateY(-1px); }
+
+        @media (max-width: 768px) {
+            .account-layout { grid-template-columns: 1fr; }
+            .account-sidebar { position: static; }
+            .my-coupons-grid { grid-template-columns: 1fr; }
+            .my-coupon-details { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <img src="img/logo.svg" alt="The Cupons">
+            </a>
+            <nav class="header-nav" style="margin-left: auto;">
+                <a href="index.html" class="nav-link">← Voltar às Ofertas</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container account-layout">
+        <aside class="account-sidebar">
+            <div class="user-badge">
+                <div class="avatar" id="user-avatar">?</div>
+                <div>
+                    <div class="user-name" id="user-name">Usuário</div>
+                    <div class="user-email" id="user-email">email</div>
+                </div>
+            </div>
+            <ul class="account-menu">
+                <li class="active"><a href="#" onclick="showSection('cupons')">🎫 Meus Cupons</a></li>
+                <li><a href="#" onclick="showSection('dados')">👤 Meus Dados</a></li>
+            </ul>
+            <button class="btn-logout" onclick="logoutUser()">🚪 Sair</button>
+        </aside>
+
+        <div class="account-main">
+            <div class="account-section active" id="section-cupons">
+                <h2 class="page-title">Meus Cupons</h2>
+                <div class="my-coupons-grid" id="my-coupons-grid"></div>
+            </div>
+
+            <div class="account-section" id="section-dados">
+                <h2 class="page-title">Meus Dados</h2>
+                <div class="data-card">
+                    <h3>Informações Pessoais</h3>
+                    <div class="data-row"><span class="data-label">Nome</span><span class="data-value" id="data-nome">—</span></div>
+                    <div class="data-row"><span class="data-label">E-mail</span><span class="data-value" id="data-email">—</span></div>
+                    <div class="data-row"><span class="data-label">Telefone</span><span class="data-value" id="data-telefone">—</span></div>
+                    <div class="data-row"><span class="data-label">CPF</span><span class="data-value" id="data-cpf">—</span></div>
+                    <div class="data-row"><span class="data-label">Cidade</span><span class="data-value" id="data-cidade">—</span></div>
+                    <div class="data-row"><span class="data-label">Membro desde</span><span class="data-value" id="data-cadastro">—</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container text-center footer-bottom" style="margin-top: 0;">
+            <p>&copy; 2026 The Cupons. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        const session = getSession();
+        if (!session || session.tipo !== 'cliente') {
+            window.location.href = 'login.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserInfo();
+            loadMyCoupons();
+            loadMyData();
+        });
+
+        function showSection(name) {
+            document.querySelectorAll('.account-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + name).classList.add('active');
+            document.querySelectorAll('.account-menu li').forEach(l => l.classList.remove('active'));
+            event.target.closest('li').classList.add('active');
+        }
+
+        function loadUserInfo() {
+            document.getElementById('user-avatar').textContent = session.nome[0];
+            document.getElementById('user-name').textContent = session.nome;
+            document.getElementById('user-email').textContent = session.email;
+        }
+
+        function loadMyCoupons() {
+            const compras = getComprasDoCliente(session.id);
+            const grid = document.getElementById('my-coupons-grid');
+            grid.innerHTML = '';
+
+            if (compras.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="empty-icon">🎫</div>
+                        <h3>Nenhum cupom ainda</h3>
+                        <p>Explore nossas ofertas e faça sua primeira compra!</p>
+                        <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Ver Ofertas</a>
+                    </div>
+                `;
+                return;
+            }
+
+            compras.forEach(compra => {
+                const cupom = cuponsData.find(c => c.id === compra.cupomId);
+                if (!cupom) return;
+
+                const isExpiredOrUsed = compra.status !== 'ativo';
+                const statusLabel = compra.status === 'ativo' ? 'Disponível' : compra.status === 'utilizado' ? 'Utilizado' : 'Expirado';
+                const cardClass = isExpiredOrUsed ? 'my-coupon-card expired' : 'my-coupon-card';
+                const codeClass = isExpiredOrUsed ? 'my-coupon-code disabled' : 'my-coupon-code';
+
+                const hoje = new Date();
+                const validade = new Date(compra.validade);
+                const diasRestantes = Math.ceil((validade - hoje) / (1000 * 60 * 60 * 24));
+                const validadeText = diasRestantes > 0 ? `${diasRestantes} dias restantes` : 'Expirado';
+
+                grid.innerHTML += `
+                    <div class="${cardClass}">
+                        <div class="my-coupon-header">
+                            <div>
+                                <div class="my-coupon-partner">${cupom.parceiro}</div>
+                                <h3>${cupom.titulo}</h3>
+                            </div>
+                            <span class="badge-status ${compra.status}">${statusLabel}</span>
+                        </div>
+
+                        <div class="my-coupon-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Valor pago</div>
+                                <div class="detail-value">${compra.valorPago}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Economia</div>
+                                <div class="detail-value" style="color: var(--success);">${cupom.desconto}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Data da compra</div>
+                                <div class="detail-value">${formatDate(compra.dataCompra)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Validade</div>
+                                <div class="detail-value">${formatDate(compra.validade)} ${!isExpiredOrUsed ? `(${validadeText})` : ''}</div>
+                            </div>
+                        </div>
+
+                        <div class="${codeClass}">
+                            <div class="code-label">Código do Voucher</div>
+                            <div class="code-value">${compra.codigo}</div>
+                        </div>
+
+                        ${!isExpiredOrUsed ? `
+                        <div class="my-coupon-footer">
+                            <button class="btn btn-success btn-block" onclick="downloadVoucherFromAccount('${compra.codigo}', ${compra.cupomId}, '${compra.dataCompra}')">📥 Baixar PDF</button>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        function loadMyData() {
+            const clientes = getClientes();
+            const cliente = clientes.find(c => c.id === session.id);
+            if (!cliente) return;
+            document.getElementById('data-nome').textContent = cliente.nome;
+            document.getElementById('data-email').textContent = cliente.email;
+            document.getElementById('data-telefone').textContent = cliente.telefone || '—';
+            document.getElementById('data-cpf').textContent = cliente.cpf || '—';
+            document.getElementById('data-cidade').textContent = cliente.cidade;
+            document.getElementById('data-cadastro').textContent = formatDate(cliente.dataCadastro);
+        }
+
+        function downloadVoucherFromAccount(code, cupomId, dataCompra) {
+            const cupom = cuponsData.find(c => c.id === cupomId);
+            if (!cupom) return;
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+            const pw = doc.internal.pageSize.getWidth();
+            const cx = pw / 2;
+
+            doc.setFillColor(248,249,250); doc.rect(0,0,pw,297,'F');
+            doc.setFillColor(0,114,188); doc.rect(0,0,pw,40,'F');
+            doc.setTextColor(255,255,255); doc.setFontSize(24); doc.setFont('helvetica','bold');
+            doc.text('THE CUPONS', cx, 25, {align:'center'});
+
+            doc.setFillColor(255,255,255); doc.roundedRect(20,55,pw-40,180,4,4,'F');
+            doc.setDrawColor(229,229,229); doc.roundedRect(20,55,pw-40,180,4,4,'S');
+
+            doc.setTextColor(23,23,23); doc.setFontSize(20); doc.text('VOUCHER DE DESCONTO',cx,78,{align:'center'});
+            doc.setDrawColor(0,114,188); doc.setLineWidth(0.5); doc.line(40,84,pw-40,84);
+
+            doc.setFontSize(11); doc.setFont('helvetica','normal'); doc.setTextColor(115,115,115);
+            doc.text('PRODUTO / SERVIÇO',cx,98,{align:'center'});
+            doc.setFontSize(16); doc.setFont('helvetica','bold'); doc.setTextColor(23,23,23);
+            doc.text(cupom.titulo,cx,108,{align:'center'});
+            doc.setFontSize(12); doc.setFont('helvetica','normal'); doc.setTextColor(0,114,188);
+            doc.text(cupom.parceiro,cx,118,{align:'center'});
+
+            doc.setFontSize(10); doc.setTextColor(163,163,163);
+            doc.text(`De ${cupom.precoAntigo}`,cx-20,135,{align:'center'});
+            doc.setFontSize(22); doc.setFont('helvetica','bold'); doc.setTextColor(34,197,94);
+            doc.text(`Por ${cupom.precoNovo}`,cx+15,136,{align:'center'});
+
+            doc.setFillColor(232,244,253); doc.roundedRect(40,148,pw-80,40,3,3,'F');
+            doc.setDrawColor(0,114,188); doc.setLineDashPattern([3,3],0);
+            doc.roundedRect(40,148,pw-80,40,3,3,'S'); doc.setLineDashPattern([],0);
+
+            doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(115,115,115);
+            doc.text('CÓDIGO DO VOUCHER',cx,158,{align:'center'});
+            doc.setFontSize(28); doc.setFont('courier','bold'); doc.setTextColor(0,114,188);
+            doc.text(code,cx,178,{align:'center'});
+
+            doc.setFontSize(10); doc.setFont('helvetica','normal'); doc.setTextColor(115,115,115);
+            doc.text(`Comprador: ${session.nome}`,cx,202,{align:'center'});
+            doc.text(`Data da compra: ${formatDate(dataCompra)}`,cx,210,{align:'center'});
+            doc.text(`Cidade: ${cupom.cidade}`,cx,218,{align:'center'});
+
+            doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(232,163,23);
+            doc.text(cupom.desconto,cx,230,{align:'center'});
+
+            doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(163,163,163);
+            doc.text('Apresente este voucher no estabelecimento.',cx,252,{align:'center'});
+            doc.text('Válido por 30 dias. Não cumulativo com outras promoções.',cx,258,{align:'center'});
+            doc.text('www.thecupons.com.br',cx,270,{align:'center'});
+
+            doc.save(`voucher-thecupons-${code}.pdf`);
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '—';
+            const [y,m,d] = dateStr.split('-');
+            return `${d}/${m}/${y}`;
+        }
+    </script>
+</body>
+</html>
