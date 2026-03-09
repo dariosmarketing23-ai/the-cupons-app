@@ -523,6 +523,17 @@
                 <img class="img-preview" id="cupom-img-preview" alt="Preview">
             </div>
             <div style="border-top: 1px solid var(--gray-200); padding-top: 14px; margin-top: 6px;">
+                <label style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; display: block;">📝 Descrição e Regulamento</label>
+                <div class="form-group">
+                    <label>Descrição Detalhada (HTML)</label>
+                    <textarea id="cupom-descricao" rows="4" placeholder="Ex: <p>Aproveite esta oferta...</p><ul><li>✅ Item 1</li></ul>" style="font-size: 0.82rem;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Regulamento (HTML)</label>
+                    <textarea id="cupom-regulamento" rows="4" placeholder="Ex: <ul><li>Válido por 30 dias...</li></ul>" style="font-size: 0.82rem;"></textarea>
+                </div>
+            </div>
+            <div style="border-top: 1px solid var(--gray-200); padding-top: 14px; margin-top: 6px;">
                 <label style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; display: block;">📊 Gatilhos de Escassez</label>
                 <div class="form-row">
                     <div class="form-group">
@@ -889,6 +900,8 @@
             document.getElementById('cupom-imagem').value = data ? data.imagem : '';
             document.getElementById('cupom-estoque').value = data ? (data.estoque || '') : '';
             document.getElementById('cupom-vendidos').value = data ? (data.vendidos || '') : '';
+            document.getElementById('cupom-descricao').value = data ? (data.descricao || '') : '';
+            document.getElementById('cupom-regulamento').value = data ? (data.regulamento || '') : '';
             if (data && data.expiraEm) {
                 const d = new Date(data.expiraEm);
                 document.getElementById('cupom-expira').value = d.toISOString().slice(0, 16);
@@ -930,6 +943,12 @@
             if (estoque) cupom.estoque = parseInt(estoque);
             if (vendidos) cupom.vendidos = parseInt(vendidos);
             if (expira) cupom.expiraEm = new Date(expira).toISOString();
+
+            // Description and Regulation
+            const descricao = document.getElementById('cupom-descricao').value.trim();
+            const regulamento = document.getElementById('cupom-regulamento').value.trim();
+            if (descricao) cupom.descricao = descricao;
+            if (regulamento) cupom.regulamento = regulamento;
 
             salvarCupom(cupom);
             closeCupomForm();

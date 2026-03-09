@@ -18,7 +18,9 @@ const DEFAULT_CUPONS = [
         ativo: true,
         estoque: 15,
         vendidos: 11,
-        expiraEm: getFutureDate(2)
+        expiraEm: getFutureDate(2),
+        descricao: '<p>Aproveite esta oferta incrível do <strong>Burguer King Caxias</strong>! Você receberá:</p><ul><li>✅ 2 sanduíches Whopper tradicionais</li><li>✅ 1 Batata Grande para compartilhar</li><li>✅ Válido para consumo no local ou retirada</li></ul><p>O Burguer King Caxias fica localizado na Av. Principal, Centro, com estacionamento amplo e ambiente climatizado.</p>',
+        regulamento: '<ul><li><strong>Compre e agende;</strong></li><li>Oferta dá direito a: 2 Whopper + 1 Batata Grande;</li><li>Até 3 cupons por CPF. Pode ser presenteado;</li><li>Período para utilização: Até 30 dias após a compra;</li><li>Dias e horários de atendimento: Segunda a Domingo, das 11h às 22h;</li><li><strong>Obrigatória a apresentação do cupom;</strong></li><li>Cupons não serão utilizados após período de validade;</li><li>Não cumulativo com outras promoções;</li><li>Dúvidas? Entre em contato pelo <a href="#">WhatsApp</a>;</li></ul>'
     },
     {
         id: 2,
@@ -33,7 +35,9 @@ const DEFAULT_CUPONS = [
         ativo: true,
         estoque: 8,
         vendidos: 5,
-        expiraEm: getFutureDate(1)
+        expiraEm: getFutureDate(1),
+        descricao: '<p>Transforme seu sorriso na <strong>Clínica Sorriso</strong>! O clareamento dental a laser é um procedimento rápido e seguro.</p><ul><li>✅ Sessão completa de clareamento a laser</li><li>✅ Avaliação prévia inclusa</li><li>✅ Profissionais especializados</li><li>✅ Resultados visíveis na primeira sessão</li></ul>',
+        regulamento: '<ul><li><strong>Compre e agende;</strong></li><li>Oferta inclui: 1 sessão de Clareamento Dental a Laser;</li><li>Até 2 cupons por CPF;</li><li>Período para utilização: Até 60 dias após a compra;</li><li>Horários: Segunda a Sexta, das 8h às 18h;</li><li><strong>Obrigatória a apresentação do cupom;</strong></li><li>Não cumulativo com outras promoções;</li></ul>'
     },
     {
         id: 3,
@@ -48,7 +52,9 @@ const DEFAULT_CUPONS = [
         ativo: true,
         estoque: 20,
         vendidos: 14,
-        expiraEm: getFutureDate(3)
+        expiraEm: getFutureDate(3),
+        descricao: '<p>Uma experiência gastronômica incrível no <strong>Coco Bambu</strong>! O prato Camarão Internacional para 2 pessoas inclui:</p><ul><li>✅ Camarão empanado com molho especial</li><li>✅ Acompanhamento de arroz e batata</li><li>✅ Ambiente climatizado e requintado</li></ul>',
+        regulamento: '<ul><li><strong>Compre e agende;</strong></li><li>Oferta para: Camarão Internacional para 2 pessoas;</li><li>Até 5 cupons por CPF. Pode ser presenteado;</li><li>Período para utilização: Até 30 dias;</li><li>Reservas com antecedência de 24h;</li><li><strong>Obrigatória a apresentação do cupom;</strong></li><li>Não cumulativo com outras promoções;</li></ul>'
     },
     {
         id: 4,
@@ -63,7 +69,9 @@ const DEFAULT_CUPONS = [
         ativo: true,
         estoque: 30,
         vendidos: 22,
-        expiraEm: getFutureDate(5)
+        expiraEm: getFutureDate(5),
+        descricao: '<p>Treine com o melhor plano da <strong>SmartFit</strong>!</p><ul><li>✅ Acesso a todas as unidades da cidade</li><li>✅ Plano Black com aulas incluídas</li><li>✅ Área de musculação e cardio completa</li></ul>',
+        regulamento: '<ul><li><strong>Compre e ative;</strong></li><li>1 mês de Plano Black SmartFit;</li><li>1 cupom por CPF;</li><li>Ativação em até 15 dias após compra;</li><li>Necessário documento com foto;</li><li>Não cumulativo com outras promoções;</li></ul>'
     },
     {
         id: 5,
@@ -78,7 +86,9 @@ const DEFAULT_CUPONS = [
         ativo: true,
         estoque: 10,
         vendidos: 8,
-        expiraEm: getFutureDate(0, 6)
+        expiraEm: getFutureDate(0, 6),
+        descricao: '<p>Deixe seu carro brilhando no <strong>Lava Jato Brilho</strong>!</p><ul><li>✅ Lavagem externa completa</li><li>✅ Lavagem interna com aspirador</li><li>✅ Aplicação de cera protetora</li><li>✅ Limpeza de painel e vidros</li></ul>',
+        regulamento: '<ul><li>Válido para veículos de passeio;</li><li>SUVs e caminhonetes podem ter acréscimo;</li><li>Até 2 cupons por CPF;</li><li>Válido por 30 dias;</li><li>Horário: Seg a Sáb, 8h às 17h;</li><li><strong>Obrigatória a apresentação do cupom;</strong></li></ul>'
     },
     {
         id: 6,
@@ -93,7 +103,9 @@ const DEFAULT_CUPONS = [
         ativo: true,
         estoque: 12,
         vendidos: 10,
-        expiraEm: getFutureDate(0, 3)
+        expiraEm: getFutureDate(0, 3),
+        descricao: '<p>Cuide de você na <strong>Barbearia VIP</strong>!</p><ul><li>✅ Corte masculino profissional</li><li>✅ Barba com toalha quente</li><li>✅ Terapia capilar relaxante</li><li>✅ Ambiente premium</li></ul>',
+        regulamento: '<ul><li>1 combo por cupom;</li><li>Até 3 cupons por CPF;</li><li>Válido por 30 dias após a compra;</li><li>Agendamento obrigatório: (86) 99999-9999;</li><li>Horário: Seg a Sáb, 9h às 19h;</li><li><strong>Obrigatória a apresentação do cupom;</strong></li></ul>'
     }
 ];
 

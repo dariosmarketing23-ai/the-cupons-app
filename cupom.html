@@ -47,6 +47,29 @@
             color: var(--gray-400); margin-bottom: 6px;
         }
         .location-info p { color: var(--gray-600); font-size: 0.9rem; }
+        /* Info Sections */
+        .info-section {
+            margin-top: 32px; background: white; border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg); padding: 28px;
+        }
+        .info-section h3 {
+            font-size: 1.15rem; font-weight: 700; margin-bottom: 16px;
+            color: var(--gray-900); display: flex; align-items: center; gap: 8px;
+        }
+        .info-section .info-content { color: var(--gray-600); font-size: 0.92rem; line-height: 1.7; }
+        .info-section .info-content ul { list-style: none; padding: 0; }
+        .info-section .info-content ul li {
+            padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+            padding-left: 24px; position: relative;
+        }
+        .info-section .info-content ul li::before {
+            content: '▸'; position: absolute; left: 0; color: var(--primary); font-weight: 700; font-size: 1rem;
+        }
+        .info-section .info-content ul li:last-child { border-bottom: none; }
+        .info-section .info-content p { margin-bottom: 12px; }
+        .info-section .info-content strong { color: var(--gray-800); }
+        .info-section .info-content a { color: var(--primary); font-weight: 600; }
+        .regulamento-section h3 { color: #DC2626; }
         .rules-section {
             margin-top: 32px; background: white; border: 1px solid var(--gray-200);
             border-radius: var(--radius-lg); padding: 28px;
@@ -59,6 +82,19 @@
         }
         .rules-section li::before { content: '✓'; position: absolute; left: 0; color: var(--success); font-weight: 700; }
         .rules-section li:last-child { border-bottom: none; }
+        /* Social share */
+        .social-share {
+            display: flex; gap: 12px; margin-top: 20px; align-items: center;
+        }
+        .social-share a {
+            width: 36px; height: 36px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.1rem;
+            color: white; text-decoration: none; transition: transform 0.2s;
+        }
+        .social-share a:hover { transform: scale(1.1); }
+        .share-fb { background: #1877F2; }
+        .share-wa { background: #25D366; }
+        .share-tw { background: #1DA1F2; }
         @media (max-width: 992px) {
             .detail-layout { grid-template-columns: 1fr; }
             .purchase-card { position: static; }
@@ -90,6 +126,27 @@
                     <a href="index.html">Início</a> › <span id="breadcrumb-category">Categoria</span> › <span id="breadcrumb-city">Cidade</span>
                 </div>
                 <img src="" alt="Imagem da Oferta" id="detail-image" class="detail-image">
+
+                <!-- Compartilhar -->
+                <div class="social-share">
+                    <a href="#" class="share-fb" title="Facebook">f</a>
+                    <a href="#" class="share-wa" id="share-wa" title="WhatsApp">☎</a>
+                    <a href="#" class="share-tw" title="Twitter">t</a>
+                </div>
+
+                <!-- Detalhes -->
+                <div class="info-section" id="detail-description-section">
+                    <h3>Detalhes</h3>
+                    <div class="info-content" id="detail-description">Carregando...</div>
+                </div>
+
+                <!-- Regulamento -->
+                <div class="info-section regulamento-section" id="detail-regulamento-section">
+                    <h3>📑 Regulamento</h3>
+                    <div class="info-content" id="detail-regulamento">Carregando...</div>
+                </div>
+
+                <!-- Como usar -->
                 <div class="rules-section">
                     <h3>Como usar este cupom</h3>
                     <ul>
@@ -186,6 +243,22 @@
                     document.getElementById('detail-location').textContent = `Localizado em ${cupom.cidade}`;
                     document.title = `${cupom.titulo} — The Cupons`;
                     document.getElementById('buy-now-btn').href = `checkout.html?id=${cupom.id}`;
+
+                    // Detalhes e Regulamento
+                    if (cupom.descricao) {
+                        document.getElementById('detail-description').innerHTML = cupom.descricao;
+                    } else {
+                        document.getElementById('detail-description-section').style.display = 'none';
+                    }
+                    if (cupom.regulamento) {
+                        document.getElementById('detail-regulamento').innerHTML = cupom.regulamento;
+                    } else {
+                        document.getElementById('detail-regulamento-section').style.display = 'none';
+                    }
+
+                    // WhatsApp share
+                    const shareText = encodeURIComponent(`Olha essa oferta incrível: ${cupom.titulo} por apenas ${cupom.precoNovo}! Acesse: ${window.location.href}`);
+                    document.getElementById('share-wa').href = `https://wa.me/?text=${shareText}`;
 
                     // ── SCARCITY TRIGGERS ──
                     const info = getScarcityInfo(cupom);
