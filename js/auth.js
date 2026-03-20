@@ -44,9 +44,53 @@ function initAuthData() {
                 cpf: '456.789.123-00',
                 cidade: 'Caxias-MA',
                 dataCadastro: '2026-03-01'
+            },
+            {
+                id: 4,
+                tipo: 'pj',
+                nome: 'Burger King Caxias',
+                email: 'bk@caxias.com',
+                senha: '123',
+                telefone: '(99) 90000-0001',
+                cnpj: '11.111.111/0001-11',
+                cidade: 'Caxias-MA',
+                dataCadastro: '2026-03-10'
+            },
+            {
+                id: 5,
+                tipo: 'pj',
+                nome: 'Studio Linda Hair',
+                email: 'linda@hair.com',
+                senha: '123',
+                telefone: '(86) 90000-0002',
+                cnpj: '22.222.222/0001-22',
+                cidade: 'Teresina-PI',
+                dataCadastro: '2026-03-11'
+            },
+            {
+                id: 6,
+                tipo: 'pj',
+                nome: 'Cinemark Teresina',
+                email: 'cinemark@the.com',
+                senha: '123',
+                telefone: '(86) 90000-0003',
+                cnpj: '33.333.333/0001-33',
+                cidade: 'Teresina-PI',
+                dataCadastro: '2026-03-12'
             }
         ];
         localStorage.setItem('tc_clientes', JSON.stringify(clientesMock));
+    } else {
+        // Force inject PJs if they don't exist yet to simplify testing without clearing cache
+        const existingClientes = JSON.parse(localStorage.getItem('tc_clientes') || '[]');
+        if (!existingClientes.some(c => c.tipo === 'pj')) {
+            const pjs = [
+                { id: 4, tipo: 'pj', nome: 'Burger King Caxias', email: 'bk@caxias.com', senha: '123', telefone: '(99) 90000-0001', cnpj: '11.111.111/0001-11', cidade: 'Caxias-MA', dataCadastro: '2026-03-10' },
+                { id: 5, tipo: 'pj', nome: 'Studio Linda Hair', email: 'linda@hair.com', senha: '123', telefone: '(86) 90000-0002', cnpj: '22.222.222/0001-22', cidade: 'Teresina-PI', dataCadastro: '2026-03-11' },
+                { id: 6, tipo: 'pj', nome: 'Cinemark Teresina', email: 'cinemark@the.com', senha: '123', telefone: '(86) 90000-0003', cnpj: '33.333.333/0001-33', cidade: 'Teresina-PI', dataCadastro: '2026-03-12' }
+            ];
+            localStorage.setItem('tc_clientes', JSON.stringify([...existingClientes, ...pjs]));
+        }
     }
 
     // Cria compras mock se não existirem
