@@ -8,9 +8,17 @@
     <style>
         .detail-page { padding: 40px 0 80px; }
         .detail-layout {
-            display: grid; grid-template-columns: 1fr 380px;
-            gap: 40px; align-items: start;
+            display: grid; 
+            grid-template-columns: 1fr 380px;
+            grid-template-areas: 
+                "header sidebar"
+                "info sidebar";
+            gap: 40px; 
+            align-items: start;
         }
+        .cupom-left-header { grid-area: header; }
+        .cupom-left-info { grid-area: info; }
+        .cupom-right-sidebar { grid-area: sidebar; }
         .detail-image {
             width: 100%; height: 380px; object-fit: cover;
             border-radius: var(--radius-lg);
@@ -107,7 +115,14 @@
         .share-wa { background: #25D366; }
         .share-tw { background: #1DA1F2; }
         @media (max-width: 992px) {
-            .detail-layout { grid-template-columns: 1fr; }
+            .detail-layout { 
+                grid-template-columns: 1fr; 
+                grid-template-areas: 
+                    "header"
+                    "sidebar"
+                    "info";
+                gap: 24px;
+            }
             .purchase-card { position: static; }
         }
     </style>
@@ -131,8 +146,8 @@
 
     <main class="detail-page">
         <div class="container detail-layout">
-            <!-- Coluna Principal -->
-            <div>
+            <!-- Left Header -->
+            <div class="cupom-left-header">
                 <div class="breadcrumbs">
                     <a href="index.html">Início</a> › <span id="breadcrumb-category">Categoria</span> › <span id="breadcrumb-city">Cidade</span>
                 </div>
@@ -148,7 +163,10 @@
                     <a href="#" class="share-wa" id="share-wa" title="WhatsApp">☎</a>
                     <a href="#" class="share-tw" title="Twitter">t</a>
                 </div>
+            </div>
 
+            <!-- Left Info -->
+            <div class="cupom-left-info">
                 <!-- Detalhes -->
                 <div class="info-section" id="detail-description-section">
                     <h3>Detalhes</h3>
@@ -173,10 +191,15 @@
                         <li>Não cumulativo com outras promoções.</li>
                     </ul>
                 </div>
+
+                <div class="location-info info-section">
+                    <h3>📍 Localização</h3>
+                    <p id="detail-location">Endereço do parceiro</p>
+                </div>
             </div>
 
             <!-- Sidebar de Compra -->
-            <div>
+            <div class="cupom-right-sidebar">
                 <div class="purchase-card">
                     <div class="detail-partner" id="detail-partner">Parceiro</div>
                     <h1 class="detail-title" id="detail-title">Carregando...</h1>
@@ -217,11 +240,6 @@
                     <div class="detail-recent-buyers" id="detail-buyers" style="display: none;">
                         <div class="dot-online"></div>
                         <span id="buyers-text"></span>
-                    </div>
-
-                    <div class="location-info">
-                        <h4>Localização</h4>
-                        <p id="detail-location">Endereço do parceiro</p>
                     </div>
                 </div>
             </div>
