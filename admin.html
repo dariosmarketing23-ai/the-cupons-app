@@ -455,9 +455,9 @@
                         <span style="font-size:0.85rem;color:var(--gray-500)" id="parceiros-count">0 parceiros</span>
                     </div>
                     <div class="table-scroll">
-                    <table class="admin-table" style="min-width: 850px;">
+                    <table class="admin-table" style="min-width: 900px;">
                         <thead>
-                            <tr><th>Parceiro (PJ)</th><th>CNPJ</th><th>Ofertas Vinculadas</th><th>Vendas Totais</th><th>Receita Bruta</th><th>Valor a Repassar</th></tr>
+                            <tr><th>Parceiro (PJ)</th><th>CNPJ</th><th>Ofertas</th><th>Vendas Totais</th><th>Receita Global</th><th>Lucro The Cupons</th><th>Lucro do Parceiro</th></tr>
                         </thead>
                         <tbody id="table-parceiros"></tbody>
                     </table>
@@ -639,12 +639,29 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
+                    <label>Tipo de Conta</label>
+                    <select id="cliente-tipo" onchange="toggleClienteFields()">
+                        <option value="consumidor">Consumidor Padrão</option>
+                        <option value="pj">Parceiro PJ</option>
+                    </select>
+                </div>
+                <div class="form-group" id="group-taxa" style="display:none;">
+                    <label>Taxa The Cupons (%)</label>
+                    <input type="number" id="cliente-taxa" value="15" min="0" max="100">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
                     <label>Telefone</label>
                     <input type="tel" id="cliente-telefone" placeholder="(99) 99999-9999">
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="group-cpf">
                     <label>CPF</label>
                     <input type="text" id="cliente-cpf" placeholder="000.000.000-00">
+                </div>
+                <div class="form-group" id="group-cnpj" style="display:none;">
+                    <label>CNPJ</label>
+                    <input type="text" id="cliente-cnpj" placeholder="00.000.000/0000-00">
                 </div>
             </div>
             <div class="form-row">
@@ -1110,15 +1127,27 @@
                     }, 0);
                 });
                 
+                let taxaPercent = p.taxaPlataforma !== undefined ? p.taxaPlataforma : 15;
+                let lucroTC = (receitaBruta * (taxaPercent / 100));
+                let lucroParceiro = (receitaBruta - lucroTC);
+                
                 tbody.innerHTML += `<tr>
                     <td><div class="user-cell"><div class="user-mini" style="background:var(--accent)">${p.nome[0]}</div><strong>${p.nome}</strong></div></td>
                     <td><code style="background:var(--gray-100);padding:2px 8px;border-radius:4px;font-size:0.78rem">${p.cnpj || '—'}</code></td>
                     <td><strong>${minhasOfertas.length}</strong></td>
                     <td><strong>${totalVendas}</strong></td>
                     <td><span style="color:var(--gray-600)">R$ ${receitaBruta.toFixed(2).replace('.', ',')}</span></td>
-                    <td><span style="color:var(--success);font-weight:700">R$ ${receitaBruta.toFixed(2).replace('.', ',')}</span></td>
+                    <td><span style="color:#DC2626;font-weight:600">R$ ${lucroTC.toFixed(2).replace('.', ',')} <small>(${taxaPercent}%)</small></span></td>
+                    <td><span style="color:var(--success);font-weight:700">R$ ${lucroParceiro.toFixed(2).replace('.', ',')} <small>(${100 - taxaPercent}%)</small></span></td>
                 </tr>`;
             });
+        }
+
+        function toggleClienteFields() {
+            const isPj = document.getElementById('cliente-tipo').value === 'pj';
+            document.getElementById('group-taxa').style.display = isPj ? 'block' : 'none';
+            document.getElementById('group-cnpj').style.display = isPj ? 'block' : 'none';
+            document.getElementById('group-cpf').style.display = isPj ? 'none' : 'block';
         }
 
         function openClienteForm(data) {
@@ -1130,6 +1159,10 @@
             document.getElementById('cliente-telefone').value = data ? (data.telefone || '') : '';
             document.getElementById('cliente-cpf').value = data ? (data.cpf || '') : '';
             document.getElementById('cliente-cidade').value = data ? data.cidade : 'Caxias-MA';
+            document.getElementById('cliente-tipo').value = data && data.tipo ? data.tipo : 'consumidor';
+            document.getElementById('cliente-taxa').value = data && data.taxaPlataforma !== undefined ? data.taxaPlataforma : '15';
+            document.getElementById('cliente-cnpj').value = data ? (data.cnpj || '') : '';
+            toggleClienteFields();
             document.getElementById('cliente-senha').value = '';
             document.getElementById('cliente-form-error').style.display = 'none';
         }
@@ -1143,6 +1176,9 @@
             const cpf = document.getElementById('cliente-cpf').value.trim();
             const cidade = document.getElementById('cliente-cidade').value;
             const senha = document.getElementById('cliente-senha').value.trim();
+            const tipo = document.getElementById('cliente-tipo').value;
+            const taxaPlataforma = parseFloat(document.getElementById('cliente-taxa').value) || 0;
+            const cnpj = document.getElementById('cliente-cnpj').value.trim();
             const editId = document.getElementById('cliente-edit-id').value;
             const errorEl = document.getElementById('cliente-form-error');
 
@@ -1152,7 +1188,7 @@
                 return;
             }
 
-            const dados = { nome, email, telefone, cpf, cidade };
+            const dados = { nome, email, telefone, cpf, cidade, tipo, taxaPlataforma, cnpj };
             if (editId) dados.id = parseInt(editId);
             if (senha) dados.senha = senha;
 
