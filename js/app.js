@@ -270,6 +270,9 @@ const CATEGORIAS = ['Restaurantes', 'Beleza e Saúde', 'Automotivo', 'Academia',
 // =========================================
 
 function getScarcityInfo(cupom) {
+    if (cupom.ilimitado) {
+        return { restantes: Infinity, percentUsed: 0, horasRestantes: null, minutosRestantes: null, urgency: 0, badge: '', timer: '', expired: false };
+    }
     const restantes = (cupom.estoque || 0) - (cupom.vendidos || 0);
     const percentUsed = cupom.estoque ? ((cupom.vendidos || 0) / cupom.estoque * 100) : 0;
     const now = new Date();
@@ -408,9 +411,10 @@ function renderCoupons(city) {
         const stockBar = getStockBarHTML(cupom);
         const timerBadge = getTimerHTML(cupom);
 
+        const imgUrl = Array.isArray(cupom.imagem) && cupom.imagem.length > 0 ? cupom.imagem[0] : cupom.imagem;
         const cardHTML = `
             <div class="coupon-card ${info.urgency >= 2 ? 'card-urgent' : ''}">
-                <div class="coupon-image-area" style="background-image: url('${cupom.imagem}')">
+                <div class="coupon-image-area" style="background-image: url('${imgUrl}')">
                     <div class="coupon-discount-badge">${cupom.desconto}</div>
                     ${urgencyBadge}
                 </div>

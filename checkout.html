@@ -459,6 +459,17 @@
                             </button>
                         </div>
 
+                        <!-- Bonus Section -->
+                        <div id="bonus-section" style="display:none; margin-bottom: 24px;">
+                            <div style="background:var(--success-light); padding:16px; border-radius:var(--radius-md); border:1px solid var(--success);">
+                                <h4 style="color:var(--success); font-weight:700; margin-bottom:8px;">🎁 Você tem R$ <span id="bonus-balance">0,00</span> em Bônus!</h4>
+                                <label style="display:flex; align-items:center; gap:8px; font-size:0.9rem; color:var(--gray-700); cursor:pointer; margin:0;">
+                                    <input type="checkbox" id="use-bonus" onchange="updateCheckoutTotal()" style="width:auto; margin:0;">
+                                    Usar meu saldo de bônus nesta compra
+                                </label>
+                            </div>
+                        </div>
+
                         <!-- Campos do Cartão -->
                         <div id="card-fields">
                             <div class="form-group">
@@ -572,6 +583,8 @@
         let currentCupom = null;
         let generatedCode = '';
         let selectedPayment = 'cartao';
+        let customerBonus = 0;
+        let finalPriceVal = 0;
 
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -587,10 +600,10 @@
                     
                     const oldNum = parseFloat(currentCupom.precoAntigo.replace('R$ ', '').replace('.', '').replace(',', '.'));
                     const newNum = parseFloat(currentCupom.precoNovo.replace('R$ ', '').replace('.', '').replace(',', '.'));
-                    const discountVal = oldNum - newNum;
+                    finalPriceVal = newNum;
+                    updateCheckoutTotal();
                     
                     document.getElementById('summary-discount').textContent = `- R$ ${discountVal.toFixed(2).replace('.', ',')}`;
-                    document.getElementById('summary-total').textContent = currentCupom.precoNovo;
                     document.title = `Comprar: ${currentCupom.titulo} — The Cupons`;
                 }
             }
@@ -605,9 +618,25 @@
                     document.getElementById('email').value = cliente.email;
                     document.getElementById('telefone').value = cliente.telefone || '';
                     document.getElementById('cpf').value = cliente.cpf || '';
+                    if (cliente.saldoBonus > 0) {
+                        customerBonus = cliente.saldoBonus;
+                        document.getElementById('bonus-balance').textContent = customerBonus.toFixed(2).replace('.', ',');
+                        document.getElementById('bonus-section').style.display = 'block';
+                    }
                 }
             }
         });
+
+        function updateCheckoutTotal() {
+            if (!currentCupom) return;
+            const useBonus = document.getElementById('use-bonus') && document.getElementById('use-bonus').checked;
+            let total = finalPriceVal;
+            if (useBonus) {
+                total -= customerBonus;
+                if (total < 0) total = 0;
+            }
+            document.getElementById('summary-total').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+        }
 
         function goToStep(step) {
             const formDados = document.getElementById('form-dados');
@@ -647,11 +676,29 @@
         function finalizePurchase() {
             if (!currentCupom) return;
 
+            const useBonus = document.getElementById('use-bonus') && document.getElementById('use-bonus').checked;
+            let total = finalPriceVal;
+            if (useBonus) {
+                total -= customerBonus;
+                if (total < 0) total = 0;
+            }
+
             // Registra compra se logado
             const session = getSession();
             if (session && session.tipo === 'cliente') {
-                const compra = registrarCompra(session.id, currentCupom.id, currentCupom.precoNovo);
+                const compra = registrarCompra(session.id, currentCupom.id, `R$ ${total.toFixed(2).replace('.', ',')}`);
                 generatedCode = compra.codigo;
+                
+                if (useBonus) {
+                    const clientes = getClientes();
+                    const cliente = clientes.find(c => c.id === session.id);
+                    if (cliente) {
+                        let deducao = customerBonus;
+                        if (customerBonus > finalPriceVal) deducao = finalPriceVal;
+                        cliente.saldoBonus -= deducao;
+                        localStorage.setItem('tc_clientes', JSON.stringify(clientes));
+                    }
+                }
             } else {
                 // Gera código avulso se não logado
                 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';

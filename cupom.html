@@ -15,6 +15,17 @@
             width: 100%; height: 380px; object-fit: cover;
             border-radius: var(--radius-lg);
         }
+        /* Slider overrides */
+        .cupom-slider { position: relative; width: 100%; height: 380px; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 24px; }
+        .cupom-slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.3s ease; }
+        .cupom-slider-track img { width: 100%; height: 100%; object-fit: cover; flex-shrink: 0; }
+        .cupom-slider-nav { position: absolute; bottom: 12px; left: 0; right: 0; display: flex; justify-content: center; gap: 8px; }
+        .cupom-slider-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.5); cursor: pointer; border: none; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        .cupom-slider-dot.active { background: white; transform: scale(1.2); }
+        .cupom-slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.4); color: white; border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.2rem; }
+        .cupom-slider-btn:hover { background: rgba(0,0,0,0.6); }
+        .cupom-slider-btn.prev { left: 12px; }
+        .cupom-slider-btn.next { right: 12px; }
         .breadcrumbs { font-size: 0.85rem; color: var(--gray-400); margin-bottom: 16px; }
         .breadcrumbs span { color: var(--gray-600); }
         .detail-partner {
@@ -125,7 +136,11 @@
                 <div class="breadcrumbs">
                     <a href="index.html">Início</a> › <span id="breadcrumb-category">Categoria</span> › <span id="breadcrumb-city">Cidade</span>
                 </div>
-                <img src="" alt="Imagem da Oferta" id="detail-image" class="detail-image">
+                <!-- Slider -->
+                <div class="cupom-slider" id="detail-slider-container">
+                    <div class="cupom-slider-track" id="detail-slider-track"></div>
+                    <div class="cupom-slider-nav" id="detail-slider-nav"></div>
+                </div>
 
                 <!-- Compartilhar -->
                 <div class="social-share">
@@ -237,7 +252,22 @@
                     document.getElementById('detail-partner').textContent = cupom.parceiro;
                     document.getElementById('detail-old-price').textContent = `De ${cupom.precoAntigo}`;
                     document.getElementById('detail-new-price').textContent = `Por ${cupom.precoNovo}`;
-                    document.getElementById('detail-image').src = cupom.imagem;
+                    
+                    // Slider Logic
+                    const imagens = Array.isArray(cupom.imagem) && cupom.imagem.length > 0 ? cupom.imagem : [cupom.imagem || ''];
+                    const track = document.getElementById('detail-slider-track');
+                    const nav = document.getElementById('detail-slider-nav');
+                    track.innerHTML = imagens.map(url => `<img src="${url}" onerror="this.src='https://placehold.co/800x400?text=Sem+Imagem'">`).join('');
+                    nav.innerHTML = imagens.length > 1 ? imagens.map((_, i) => `<button class="cupom-slider-dot ${i===0?'active':''}" onclick="goToSlide(${i})"></button>`).join('') : '';
+                    if (imagens.length > 1 && !document.querySelector('.cupom-slider-btn.prev')) {
+                        document.getElementById('detail-slider-container').insertAdjacentHTML('beforeend', `
+                            <button class="cupom-slider-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+                            <button class="cupom-slider-btn next" onclick="moveSlide(1)">&#10095;</button>
+                        `);
+                    }
+                    window.sliderImagesCount = imagens.length;
+                    window.currentCupomSlide = 0;
+
                     document.getElementById('breadcrumb-category').textContent = cupom.categoria;
                     document.getElementById('breadcrumb-city').textContent = cupom.cidade;
                     document.getElementById('detail-location').textContent = `Localizado em ${cupom.cidade}`;
@@ -246,12 +276,16 @@
 
                     // Detalhes e Regulamento
                     if (cupom.descricao) {
-                        document.getElementById('detail-description').innerHTML = cupom.descricao;
+                        const descEl = document.getElementById('detail-description');
+                        descEl.textContent = cupom.descricao;
+                        descEl.style.whiteSpace = 'pre-wrap';
                     } else {
                         document.getElementById('detail-description-section').style.display = 'none';
                     }
                     if (cupom.regulamento) {
-                        document.getElementById('detail-regulamento').innerHTML = cupom.regulamento;
+                        const regEl = document.getElementById('detail-regulamento');
+                        regEl.textContent = cupom.regulamento;
+                        regEl.style.whiteSpace = 'pre-wrap';
                     } else {
                         document.getElementById('detail-regulamento-section').style.display = 'none';
                     }
@@ -363,6 +397,23 @@
 
             tick();
             countdownInterval = setInterval(tick, 1000);
+        }
+
+        // Slider functions globally
+        window.goToSlide = function(index) {
+            window.currentCupomSlide = index;
+            updateCupomSlider();
+        };
+        window.moveSlide = function(dir) {
+            window.currentCupomSlide = (window.currentCupomSlide + dir + window.sliderImagesCount) % window.sliderImagesCount;
+            updateCupomSlider();
+        };
+        function updateCupomSlider() {
+            const track = document.getElementById('detail-slider-track');
+            if (track) track.style.transform = `translateX(-${window.currentCupomSlide * 100}%)`;
+            document.querySelectorAll('.cupom-slider-dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === window.currentCupomSlide);
+            });
         }
     </script>
 </body>

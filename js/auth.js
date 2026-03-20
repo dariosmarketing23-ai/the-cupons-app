@@ -145,6 +145,16 @@ function registerUser(dados) {
         return { success: false, msg: 'Este e-mail já está cadastrado.' };
     }
 
+    // Verifica indicação
+    const ref = localStorage.getItem('tc_ref');
+    if (ref) {
+        const referrer = clientes.find(c => c.id === parseInt(ref));
+        if (referrer) {
+            referrer.saldoBonus = (referrer.saldoBonus || 0) + 5;
+        }
+        localStorage.removeItem('tc_ref');
+    }
+
     const novoCliente = {
         id: clientes.length > 0 ? Math.max(...clientes.map(c => c.id)) + 1 : 1,
         nome: dados.nome,
@@ -153,6 +163,9 @@ function registerUser(dados) {
         telefone: dados.telefone || '',
         cpf: dados.cpf || '',
         cidade: dados.cidade || 'Caxias-MA',
+        tipo: dados.tipo || 'consumidor',
+        cnpj: dados.cnpj || '',
+        saldoBonus: 0,
         dataCadastro: new Date().toISOString().split('T')[0]
     };
 
@@ -165,7 +178,8 @@ function registerUser(dados) {
         id: novoCliente.id,
         nome: novoCliente.nome,
         email: novoCliente.email,
-        cidade: novoCliente.cidade
+        cidade: novoCliente.cidade,
+        tipo: novoCliente.tipo
     }));
 
     return { success: true };

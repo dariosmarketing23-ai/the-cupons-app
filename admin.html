@@ -287,6 +287,7 @@
                 <li><a href="#" onclick="showSection('banners')"><span>🖼️</span> Banners</a></li>
                 <li><a href="#" onclick="showSection('cupons')"><span>🎫</span> Cupons</a></li>
                 <li><a href="#" onclick="showSection('clientes')"><span>👥</span> Clientes</a></li>
+                <li><a href="#" onclick="showSection('parceiros')"><span>🤝</span> Parceiros PJ</a></li>
                 <li><a href="#" onclick="showSection('vendas')"><span>🛒</span> Vendas</a></li>
             </ul>
             <button class="btn-logout" onclick="logoutUser()">🚪 Sair</button>
@@ -443,9 +444,33 @@
                 </div>
             </div>
 
+            <!-- ═══════════ PARCEIROS (PJ) ═══════════ -->
+            <div class="admin-section" id="section-parceiros">
+                <div class="title-row">
+                    <h2 class="admin-page-title">Gerenciar Parceiros</h2>
+                </div>
+                <div class="admin-panel">
+                    <div class="panel-header">
+                        <h3>Métricas por Parceiro (PJ)</h3>
+                        <span style="font-size:0.85rem;color:var(--gray-500)" id="parceiros-count">0 parceiros</span>
+                    </div>
+                    <div class="table-scroll">
+                    <table class="admin-table" style="min-width: 850px;">
+                        <thead>
+                            <tr><th>Parceiro (PJ)</th><th>CNPJ</th><th>Ofertas Vinculadas</th><th>Vendas Totais</th><th>Receita Bruta</th><th>Valor a Repassar</th></tr>
+                        </thead>
+                        <tbody id="table-parceiros"></tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+
             <!-- ═══════════ VENDAS ═══════════ -->
             <div class="admin-section" id="section-vendas">
-                <h2 class="admin-page-title">Todas as Vendas</h2>
+                <div class="title-row">
+                    <h2 class="admin-page-title">Todas as Vendas</h2>
+                    <button class="btn btn-outline" onclick="exportVendasCSV()">📄 Exportar Relatório (CSV)</button>
+                </div>
                 <div class="admin-panel">
                     <div class="panel-header">
                         <h3>Histórico de Vendas</h3>
@@ -480,27 +505,19 @@
                     <input type="text" id="cupom-parceiro" placeholder="Ex: Burguer King">
                 </div>
                 <div class="form-group">
-                    <label>Cidade *</label>
-                    <select id="cupom-cidade">
-                        <option value="Caxias-MA">Caxias — MA</option>
-                        <option value="Teresina-PI">Teresina — PI</option>
+                    <label>Vincular a Conta PJ (Opcional)</label>
+                    <select id="cupom-pj-id">
+                        <option value="">Nenhum (Não vinculado)</option>
                     </select>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Preço Original *</label>
-                    <input type="text" id="cupom-preco-antigo" placeholder="R$ 69,90">
-                </div>
-                <div class="form-group">
-                    <label>Preço Promocional *</label>
-                    <input type="text" id="cupom-preco-novo" placeholder="R$ 39,90">
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label>Desconto (ex: 43% OFF) *</label>
-                    <input type="text" id="cupom-desconto" placeholder="43% OFF">
+                    <label>Cidade *</label>
+                    <select id="cupom-cidade">
+                        <option value="Caxias-MA">Caxias — MA</option>
+                        <option value="Teresina-PI">Teresina — PI</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label>Categoria *</label>
@@ -518,24 +535,30 @@
                 </div>
             </div>
             <div class="form-group">
-                <label>URL da Imagem *</label>
-                <input type="text" id="cupom-imagem" placeholder="https://images.unsplash.com/..." oninput="previewCupomImage()">
-                <img class="img-preview" id="cupom-img-preview" alt="Preview">
+                <label>Imagens do Cupom *(Pode selecionar várias)*</label>
+                <input type="file" id="cupom-imagem" accept="image/*" multiple onchange="handleCupomImages(event)">
+                <div id="cupom-img-preview-container" style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px;"></div>
             </div>
             <div style="border-top: 1px solid var(--gray-200); padding-top: 14px; margin-top: 6px;">
                 <label style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; display: block;">📝 Descrição e Regulamento</label>
                 <div class="form-group">
-                    <label>Descrição Detalhada (HTML)</label>
-                    <textarea id="cupom-descricao" rows="4" placeholder="Ex: <p>Aproveite esta oferta...</p><ul><li>✅ Item 1</li></ul>" style="font-size: 0.82rem;"></textarea>
+                    <label>Descrição Detalhada</label>
+                    <textarea id="cupom-descricao" rows="4" placeholder="Ex: Aproveite esta oferta..." style="font-size: 0.82rem;"></textarea>
                 </div>
                 <div class="form-group">
-                    <label>Regulamento (HTML)</label>
-                    <textarea id="cupom-regulamento" rows="4" placeholder="Ex: <ul><li>Válido por 30 dias...</li></ul>" style="font-size: 0.82rem;"></textarea>
+                    <label>Regulamento</label>
+                    <textarea id="cupom-regulamento" rows="4" placeholder="Ex: Válido por 30 dias..." style="font-size: 0.82rem;"></textarea>
                 </div>
             </div>
             <div style="border-top: 1px solid var(--gray-200); padding-top: 14px; margin-top: 6px;">
                 <label style="font-size: 0.82rem; font-weight: 700; color: var(--gray-900); margin-bottom: 10px; display: block;">📊 Gatilhos de Escassez</label>
                 <div class="form-row">
+                    <div class="form-group" style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" id="cupom-ilimitado" onchange="document.getElementById('estoque-container').style.display = this.checked ? 'none' : 'grid'" style="width:auto; cursor:pointer;">
+                        <label for="cupom-ilimitado" style="margin:0; cursor:pointer;">Deixar Livre (Sem Limite de Quantidade)</label>
+                    </div>
+                </div>
+                <div class="form-row" id="estoque-container">
                     <div class="form-group">
                         <label>Qtd em Estoque</label>
                         <input type="number" id="cupom-estoque" placeholder="Ex: 20" min="0">
@@ -585,8 +608,9 @@
             </div>
             
             <div class="form-group">
-                <label>URL da Imagem * (Recomendado: 1200x600px)</label>
-                <input type="text" id="banner-imagem" placeholder="https://..." oninput="previewBannerImage()">
+                <label>Imagem do Banner * (Recomendado: 1200x600px)</label>
+                <input type="file" id="banner-imagem" accept="image/*" onchange="handleBannerImage(event)">
+                <input type="hidden" id="banner-imagem-base64">
                 <img class="img-preview" id="banner-img-preview" style="height: 140px; object-position: center;" alt="Preview">
             </div>
             
@@ -661,6 +685,7 @@
             loadBanners();
             loadCuponsTable();
             loadClientes();
+            loadParceiros();
             loadVendas();
         }
 
@@ -863,7 +888,7 @@
                 tbody.innerHTML += `<tr>
                     <td>
                         <div class="cupom-info-cell">
-                            <img src="${cupom.imagem}" class="cupom-thumb" onerror="this.style.display='none'">
+                            <img src="${Array.isArray(cupom.imagem) ? cupom.imagem[0] : cupom.imagem}" class="cupom-thumb" onerror="this.style.display='none'">
                             <div class="cupom-meta">
                                 <div class="cupom-name">${cupom.titulo}</div>
                                 <div class="cupom-partner">${cupom.parceiro}</div>
@@ -886,6 +911,9 @@
             });
         }
 
+        // State variables for images
+        let currentCupomImages = [];
+
         function openCupomForm(data) {
             document.getElementById('cupom-modal').style.display = 'flex';
             document.getElementById('cupom-form-title').textContent = data ? 'Editar Cupom' : 'Novo Cupom';
@@ -897,27 +925,90 @@
             document.getElementById('cupom-preco-novo').value = data ? data.precoNovo : '';
             document.getElementById('cupom-desconto').value = data ? data.desconto : '';
             document.getElementById('cupom-categoria').value = data ? data.categoria : 'Restaurantes';
-            document.getElementById('cupom-imagem').value = data ? data.imagem : '';
+            
+            // Populate PJ select
+            const selectPj = document.getElementById('cupom-pj-id');
+            const pjs = getClientes().filter(c => c.tipo === 'pj');
+            selectPj.innerHTML = '<option value="">Nenhum (Não vinculado)</option>' + 
+                pjs.map(p => `<option value="${p.id}">${p.nome} (${p.cnpj || 'Sem CNPJ'})</option>`).join('');
+            selectPj.value = data && data.pjId ? data.pjId : '';
             document.getElementById('cupom-estoque').value = data ? (data.estoque || '') : '';
             document.getElementById('cupom-vendidos').value = data ? (data.vendidos || '') : '';
             document.getElementById('cupom-descricao').value = data ? (data.descricao || '') : '';
             document.getElementById('cupom-regulamento').value = data ? (data.regulamento || '') : '';
+            
+            const isUnlim = data ? !!data.ilimitado : false;
+            document.getElementById('cupom-ilimitado').checked = isUnlim;
+            document.getElementById('estoque-container').style.display = isUnlim ? 'none' : 'grid';
+
             if (data && data.expiraEm) {
                 const d = new Date(data.expiraEm);
                 document.getElementById('cupom-expira').value = d.toISOString().slice(0, 16);
             } else {
                 document.getElementById('cupom-expira').value = '';
             }
-            previewCupomImage();
+
+            // Handles multiple images
+            if (data && data.imagem) {
+                currentCupomImages = Array.isArray(data.imagem) ? [...data.imagem] : [data.imagem];
+            } else {
+                currentCupomImages = [];
+            }
+            renderCupomPreviews();
+            document.getElementById('cupom-imagem').value = ''; // Reset file input
         }
 
         function closeCupomForm() { document.getElementById('cupom-modal').style.display = 'none'; }
 
-        function previewCupomImage() {
-            const url = document.getElementById('cupom-imagem').value;
-            const p = document.getElementById('cupom-img-preview');
-            if (url && url.startsWith('http')) { p.src = url; p.classList.add('visible'); }
-            else { p.classList.remove('visible'); }
+        // Helper to convert Image File to resized Base64
+        function resizeImageBase64(file, maxWidth, callback) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    callback(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleCupomImages(event) {
+            const files = event.target.files;
+            if (!files.length) return;
+            Array.from(files).forEach(file => {
+                resizeImageBase64(file, 800, base64 => {
+                    currentCupomImages.push(base64);
+                    renderCupomPreviews();
+                });
+            });
+            event.target.value = ''; // Reset to allow same file re-selection
+        }
+
+        function renderCupomPreviews() {
+            const c = document.getElementById('cupom-img-preview-container');
+            c.innerHTML = currentCupomImages.map((b64, idx) => `
+                <div style="position:relative; width: 80px; height: 80px;">
+                    <img src="${b64}" style="width:100%; height:100%; object-fit:cover; border-radius:4px; border:1px solid #ccc;">
+                    <button type="button" onclick="removeCupomImage(${idx})" style="position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size: 12px; line-height: 1;">&times;</button>
+                </div>
+            `).join('');
+        }
+
+        function removeCupomImage(idx) {
+            currentCupomImages.splice(idx, 1);
+            renderCupomPreviews();
         }
 
         function saveCupomForm() {
@@ -928,20 +1019,25 @@
             const pn = document.getElementById('cupom-preco-novo').value.trim();
             const d = document.getElementById('cupom-desconto').value.trim();
             const ca = document.getElementById('cupom-categoria').value;
-            const im = document.getElementById('cupom-imagem').value.trim();
+            const pjId = document.getElementById('cupom-pj-id').value;
+            const im = currentCupomImages;
             const eid = document.getElementById('cupom-edit-id').value;
 
-            if (!t || !pa || !po || !pn || !d || !im) { alert('Preencha todos os campos obrigatórios.'); return; }
+            if (!t || !pa || !po || !pn || !d || im.length === 0) { alert('Preencha todos os campos obrigatórios e adicione ao menos uma imagem.'); return; }
 
             const cupom = { titulo:t, parceiro:pa, cidade:ci, precoAntigo:po, precoNovo:pn, desconto:d, categoria:ca, imagem:im };
+            if (pjId) cupom.pjId = parseInt(pjId);
             if (eid) cupom.id = parseInt(eid);
 
             // Scarcity fields
+            const ilimitado = document.getElementById('cupom-ilimitado').checked;
+            cupom.ilimitado = ilimitado;
+            
             const estoque = document.getElementById('cupom-estoque').value;
             const vendidos = document.getElementById('cupom-vendidos').value;
             const expira = document.getElementById('cupom-expira').value;
-            if (estoque) cupom.estoque = parseInt(estoque);
-            if (vendidos) cupom.vendidos = parseInt(vendidos);
+            if (!ilimitado && estoque) cupom.estoque = parseInt(estoque);
+            if (!ilimitado && vendidos) cupom.vendidos = parseInt(vendidos);
             if (expira) cupom.expiraEm = new Date(expira).toISOString();
 
             // Description and Regulation
@@ -987,6 +1083,40 @@
                             <button class="btn-sm btn-delete" onclick="deleteCliente(${c.id})">🗑 Excluir</button>
                         </div>
                     </td>
+                </tr>`;
+            });
+        }
+
+        function loadParceiros() {
+            const clientes = getClientes();
+            const cupons = getCupons();
+            const compras = getCompras();
+            const parceiros = clientes.filter(c => c.tipo === 'pj');
+            
+            document.getElementById('parceiros-count').textContent = `${parceiros.length} parceiros`;
+            const tbody = document.getElementById('table-parceiros');
+            tbody.innerHTML = '';
+            
+            parceiros.forEach(p => {
+                const minhasOfertas = cupons.filter(cu => cu.pjId === p.id);
+                let totalVendas = 0;
+                let receitaBruta = 0;
+                
+                minhasOfertas.forEach(oferta => {
+                    const vendasOferta = compras.filter(co => co.cupomId === oferta.id);
+                    totalVendas += vendasOferta.length;
+                    receitaBruta += vendasOferta.reduce((acc, curr) => {
+                        return acc + parseFloat(curr.valorPago.replace('R$ ', '').replace('.', '').replace(',', '.'));
+                    }, 0);
+                });
+                
+                tbody.innerHTML += `<tr>
+                    <td><div class="user-cell"><div class="user-mini" style="background:var(--accent)">${p.nome[0]}</div><strong>${p.nome}</strong></div></td>
+                    <td><code style="background:var(--gray-100);padding:2px 8px;border-radius:4px;font-size:0.78rem">${p.cnpj || '—'}</code></td>
+                    <td><strong>${minhasOfertas.length}</strong></td>
+                    <td><strong>${totalVendas}</strong></td>
+                    <td><span style="color:var(--gray-600)">R$ ${receitaBruta.toFixed(2).replace('.', ',')}</span></td>
+                    <td><span style="color:var(--success);font-weight:700">R$ ${receitaBruta.toFixed(2).replace('.', ',')}</span></td>
                 </tr>`;
             });
         }
@@ -1071,6 +1201,31 @@
             });
         }
 
+        function exportVendasCSV() {
+            const vendas = getCompras();
+            const clientes = getClientes();
+            const cupons = getCupons();
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "ID da Venda;Data;Cliente;CPF do Cliente;Codigo do Cupom;Valor Pago;Status;Parceiro\n";
+            
+            vendas.forEach(v => {
+                const cli = clientes.find(c => c.id === v.clienteId) || {};
+                const cop = cupons.find(c => c.id === v.cupomId) || {};
+                const dataStr = formatDate(v.dataCompra);
+                const row = [v.id, dataStr, cli.nome || 'N/A', cli.cpf || 'N/A', v.codigo, v.valorPago, v.status, cop.parceiro || 'N/A'];
+                csvContent += row.join(";") + "\n";
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "relatorio_vendas.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // ── Utils ──
         function formatDate(d) {
             if (!d) return '—';
@@ -1121,16 +1276,26 @@
             document.getElementById('banner-subtitulo').value = data ? data.subtitulo : '';
             document.getElementById('banner-texto-botao').value = data ? data.textoBotao : 'Ver Ofertas';
             document.getElementById('banner-link-botao').value = data ? data.linkBotao : '#';
-            document.getElementById('banner-imagem').value = data ? data.imagem : '';
+            document.getElementById('banner-imagem-base64').value = data ? data.imagem : '';
+            document.getElementById('banner-imagem').value = '';
             previewBannerImage();
         }
 
         function closeBannerForm() { document.getElementById('banner-modal').style.display = 'none'; }
 
+        function handleBannerImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            resizeImageBase64(file, 1200, base64 => {
+                document.getElementById('banner-imagem-base64').value = base64;
+                previewBannerImage();
+            });
+        }
+
         function previewBannerImage() {
-            const url = document.getElementById('banner-imagem').value;
+            const b64 = document.getElementById('banner-imagem-base64').value;
             const p = document.getElementById('banner-img-preview');
-            if (url && url.startsWith('http')) { p.src = url; p.classList.add('visible'); }
+            if (b64) { p.src = b64; p.classList.add('visible'); }
             else { p.classList.remove('visible'); }
         }
 
@@ -1139,7 +1304,7 @@
             const su = document.getElementById('banner-subtitulo').value.trim();
             const tb = document.getElementById('banner-texto-botao').value.trim();
             const lb = document.getElementById('banner-link-botao').value.trim();
-            const im = document.getElementById('banner-imagem').value.trim();
+            const im = document.getElementById('banner-imagem-base64').value;
             const eid = document.getElementById('banner-edit-id').value;
 
             if (!ti || !su || !im) { alert('Preencha os campos obrigatórios (Título, Subtítulo e Imagem).'); return; }
